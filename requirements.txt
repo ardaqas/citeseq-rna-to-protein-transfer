@@ -1,0 +1,22 @@
+# Core analysis stack (CPU only).
+#
+# Install (Intel Mac needs prebuilt llvmlite/numba; newest llvmlite has no
+# x86_64 macOS wheel and fails to build from source):
+#   uv venv .venv --python 3.10
+#   uv pip install --python .venv/bin/python \
+#       --only-binary llvmlite --only-binary numba -r requirements.txt
+# Exact working versions are in requirements-lock.txt.
+# torch is intentionally NOT listed here: it is installed separately in Phase 4.
+anndata>=0.10
+scanpy>=1.10
+h5py>=3.8
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+seaborn
+umap-learn
+jupyterlab
+ipykernel
+pytest>=7.0
