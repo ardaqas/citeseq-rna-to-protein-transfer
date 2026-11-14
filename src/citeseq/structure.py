@@ -45,7 +45,7 @@ def _dataframe_summary(group, max_categories):
     print(f"  rows: {n_rows:,}  (index column: '{index_key}')")
     index_head = [x.decode() if isinstance(x, bytes) else x for x in group[index_key][:3]]
     print(f"  first index values: {index_head}")
-    for col in _attr(group, "column-order", []) if len(group.attrs.get("column-order", [])) else []:
+    for col in group.attrs.get("column-order", []):
         col = col.decode() if isinstance(col, bytes) else col
         node = group[col]
         if isinstance(node, h5py.Group) and "categories" in node:  # categorical
