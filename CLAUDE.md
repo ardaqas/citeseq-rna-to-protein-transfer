@@ -36,6 +36,17 @@ It re-examines a known problem and does not propose a new method.
 - `obsm['ADT_isotype_controls']` is CLR-transformed, not raw.
 - **Do not use `obs['GEX_phase']`** (~65% G2M, not plausible).
 - `obs['is_train']` is the competition's own split. We build our own splits.
+- Provided GEX QC columns were most likely computed before gene filtering (ours: slightly
+  fewer genes, slightly higher % mito; correlation 0.9998 or higher).
+- ADT depth has a strong site effect (verified within donor1): median ADT per cell is
+  6,073 (s1), 627 (s2), 1,623 (s3) and 4,762 (s4).
+- Only 12/45 cell types have >= 20 cells in every donor. cDC1 and T prog cycling occur only
+  in donor7, and CD8+ T naive CD127+ CD26- CD101- only in donor2.
+
+## Phase status
+- Phase 0: done. Phase 1: done (`notebooks/01_anndata_qc_normalization.ipynb`, peak 4.5 GB, ~3 min).
+- Phase 1 normalization: RNA = CP10k + log1p from counts; ADT target = provided per-cell CLR.
+- `pynndescent<0.6` is pinned (0.7 breaks scanpy 1.11.5 neighbors on large data).
 
 ## Metrics
 Per protein: Pearson over all test cells; within-cell-type Pearson (types with
