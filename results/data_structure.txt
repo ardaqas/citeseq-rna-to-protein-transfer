@@ -1,0 +1,212 @@
+File: GSE194122_openproblems_neurips2021_cite_BMMC_processed.h5ad  (0.62 GB on disk)
+
+Top-level keys: ['X', 'layers', 'obs', 'obsm', 'uns', 'var']
+
+[X]
+  csr_matrix shape=(90261, 14087) dtype=float32 nnz=141,495,252 density=0.1113 first_1,000,000_values_integer=False min=0.0224241241812706 max=402890.5625
+
+[obs]
+  rows: 90,261  (index column: '_index')
+  first index values: ['GCATTAGCATAAGCGG-1-s1d1', 'TACAGGTGTTAGAGTA-1-s1d1', 'AGGATCTAGGTCTACT-1-s1d1']
+  - GEX_n_genes_by_counts: int32, min=50, max=7674, n_unique=5309, n_nan=0
+  - GEX_pct_counts_mt: float32, min=0.0, max=19.991382598876953, n_unique=81326, n_nan=0
+  - GEX_size_factors: float64, min=0.0001964520088865306, max=9.588940804304679, n_unique=90260, n_nan=0
+  - GEX_phase: categorical, 3 categories, 0 missing
+        G2M                                  58,245
+        S                                    16,773
+        G1                                   15,243
+  - ADT_n_antibodies_by_counts: int32, min=51, max=140, n_unique=88, n_nan=0
+  - ADT_total_counts: float32, min=200.0, max=39576.0, n_unique=12881, n_nan=0
+  - ADT_iso_count: float64, min=0.0, max=246.0, n_unique=140, n_nan=0
+  - cell_type: categorical, 45 categories, 0 missing
+        CD14+ Mono                           21,693
+        CD4+ T activated                      6,966
+        CD4+ T naive                          5,897
+        NK                                    5,434
+        Reticulocyte                          4,272
+        Erythroblast                          4,039
+        Naive CD20+ B IGKC+                   3,990
+        CD8+ T naive                          3,107
+        CD16+ Mono                            2,635
+        NK CD158e1+                           2,167
+        Naive CD20+ B IGKC-                   1,979
+        G/M prog                              1,881
+        pDC                                   1,758
+        HSC                                   1,703
+        cDC2                                  1,702
+        Lymph prog                            1,681
+        Transitional B                        1,575
+        Proerythroblast                       1,512
+        CD8+ T CD57+ CD45RO+                  1,470
+        Normoblast                            1,435
+        CD8+ T CD57+ CD45RA+                  1,303
+        CD8+ T TIGIT+ CD45RO+                 1,160
+        CD4+ T activated integrinB7+          1,056
+        CD8+ T TIGIT+ CD45RA+                 1,032
+        CD8+ T CD49f+                           912
+        CD8+ T CD69+ CD45RO+                    897
+        B1 B IGKC+                              820
+        MAIT                                    756
+        CD8+ T CD69+ CD45RA+                    740
+        MK/E prog                               690
+        gdT CD158b+                             674
+        B1 B IGKC-                              613
+        T reg                                   609
+        ILC1                                    552
+        Plasma cell IGKC+                       288
+        Plasma cell IGKC-                       239
+        ILC                                     238
+        Plasmablast IGKC+                       232
+        gdT TCRVD2+                             191
+        Plasmablast IGKC-                       130
+        CD4+ T CD314+ CD45RA+                    93
+        dnT                                      56
+        CD8+ T naive CD127+ CD26- CD101-         42
+        T prog cycling                           24
+        cDC1                                     18
+  - batch: categorical, 12 categories, 0 missing
+        s3d7                                 11,473
+        s3d6                                 11,035
+        s2d1                                 10,465
+        s3d1                                  9,521
+        s2d5                                  9,122
+        s4d9                                  7,365
+        s1d3                                  6,106
+        s2d4                                  5,584
+        s4d1                                  5,456
+        s1d1                                  5,227
+        s1d2                                  4,978
+        s4d8                                  3,929
+  - ADT_pseudotime_order: float32, min=0.0, max=1.0, n_unique=13525, n_nan=76,682
+  - GEX_pseudotime_order: float32, min=0.0, max=1.0, n_unique=13599, n_nan=76,624
+  - Samplename: categorical, 12 categories, 0 missing
+        site3_donor7_cite                    11,473
+        site3_donor6_cite                    11,035
+        site2_donor1_cite                    10,465
+        site3_donor1_cite                     9,521
+        site2_donor5_cite                     9,122
+        site4_donor9_cite                     7,365
+        site1_donor3_cite                     6,106
+        site2_donor4_cite                     5,584
+        site4_donor1_cite                     5,456
+        site1_donor1_cite                     5,227
+        site1_donor2_cite                     4,978
+        site4_donor8_cite                     3,929
+  - Site: categorical, 4 categories, 0 missing
+        site3                                32,029
+        site2                                25,171
+        site4                                16,750
+        site1                                16,311
+  - DonorNumber: categorical, 9 categories, 0 missing
+        donor1                               30,669
+        donor7                               11,473
+        donor6                               11,035
+        donor5                                9,122
+        donor9                                7,365
+        donor3                                6,106
+        donor4                                5,584
+        donor2                                4,978
+        donor8                                3,929
+  - Modality: categorical, 1 categories, 0 missing
+        cite                                 90,261
+  - VendorLot: int64, min=3051675, max=3061608, n_unique=9, n_nan=0
+  - DonorID: int64, min=10886, max=28045, n_unique=9, n_nan=0
+  - DonorAge: int64, min=22, max=40, n_unique=8, n_nan=0
+  - DonorBMI: float64, min=23.8, max=32.6, n_unique=9, n_nan=0
+  - DonorBloodType: categorical, 4 categories, 0 missing
+        B-                                   30,669
+        O+                                   28,177
+        A+                                   26,437
+        B+                                    4,978
+  - DonorRace: categorical, 4 categories, 0 missing
+        White                                45,375
+        Asian                                22,557
+        Other Race                           18,400
+        Black or African American             3,929
+  - Ethnicity: categorical, 2 categories, 0 missing
+        HISPANIC OR LATINO                   58,191
+        NOT HISPANIC OR LATINO               32,070
+  - DonorGender: categorical, 2 categories, 0 missing
+        Male                                 53,653
+        Female                               36,608
+  - QCMeds: categorical, 2 categories, 0 missing
+        False                                73,810
+        True                                 16,451
+  - DonorSmoker: categorical, 2 categories, 0 missing
+        Nonsmoker                            75,033
+        Smoker                               15,228
+  - is_train: categorical, 3 categories, 0 missing
+        train                                66,175
+        test                                 15,066
+        iid_holdout                           9,020
+
+[var]
+  rows: 14,087  (index column: '_index')
+  first index values: ['AL627309.5', 'LINC01409', 'LINC01128']
+  - feature_types: categorical, 2 categories, 0 missing
+        GEX                                  13,953
+        ADT                                     134
+  - gene_id: categorical, 13953 categories, 98 missing
+        ENSG00000010278                           2
+        ENSG00000139193                           2
+        ENSG00000085117                           2
+        ENSG00000125810                           2
+        ENSG00000135404                           2
+        ENSG00000139187                           2
+        ENSG00000178562                           2
+        ENSG00000117091                           2
+        ENSG00000196776                           2
+        ENSG00000110848                           2
+        ENSG00000101017                           2
+        ENSG00000137101                           2
+        ENSG00000004468                           2
+        ENSG00000010610                           2
+        ENSG00000272398                           2
+        ENSG00000105383                           2
+        ENSG00000169442                           2
+        ENSG00000114013                           2
+        ENSG00000168329                           2
+        ENSG00000134256                           2
+        ENSG00000026508                           2
+        ENSG00000177575                           2
+        ENSG00000150637                           2
+        ENSG00000173762                           2
+        ENSG00000181847                           2
+        ENSG00000112149                           2
+        ENSG00000135218                           2
+        ENSG00000170458                           2
+        ENSG00000122223                           2
+        ENSG00000204592                           2
+        ENSG00000110448                           2
+        ENSG00000177455                           2
+        ENSG00000116815                           2
+        ENSG00000116824                           2
+        ENSG00000110651                           2
+        ENSG00000012124                           2
+        ENSG00000175711                           1
+        ENSG00000175701                           1
+        ENSG00000175727                           1
+        ENSG00000175768                           1
+        ENSG00000175643                           1
+        ENSG00000175764                           1
+        ENSG00000175779                           1
+        ENSG00000175782                           1
+        ENSG00000175691                           1
+        ENSG00000175662                           1
+        ENSG00000175756                           1
+        ENSG00000175582                           1
+        ENSG00000175611                           1
+        ENSG00000175482                           1
+        ... (13903 more)
+
+[layers]
+  - counts: csr_matrix shape=(90261, 14087) dtype=float32 nnz=141,495,252 density=0.1113 first_1,000,000_values_integer=True min=1.0 max=18539.0
+
+[obsm]
+  - ADT_X_pca: dense (90261, 50) float32
+  - ADT_X_umap: dense (90261, 2) float32
+  - ADT_isotype_controls: dataframe with columns ['Mouse-IgG1', 'Mouse-IgG2a', 'Mouse-IgG2b', 'Rat-IgG2b', 'Rat-IgG1', 'Rat-IgG2a']
+  - GEX_X_pca: dense (90261, 50) float32
+  - GEX_X_umap: dense (90261, 2) float32
+
+[uns] keys: ['dataset_id', 'genome', 'organism']

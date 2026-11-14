@@ -23,6 +23,9 @@ def _matrix_summary(node, n_check=1_000_000):
     if isinstance(node, h5py.Dataset):
         return f"dense {node.shape} {node.dtype}"
     enc = _attr(node, "encoding-type", "?")
+    if "data" not in node:  # not a sparse matrix, e.g. a dataframe stored in obsm
+        cols = [c.decode() if isinstance(c, bytes) else c for c in node.attrs.get("column-order", [])]
+        return f"{enc} with columns {cols}"
     shape = tuple(int(s) for s in node.attrs.get("shape", ()))
     data = node["data"]
     nnz = data.shape[0]
@@ -45,13 +48,22 @@ def _dataframe_summary(group, max_categories):
     print(f"  rows: {n_rows:,}  (index column: '{index_key}')")
     index_head = [x.decode() if isinstance(x, bytes) else x for x in group[index_key][:3]]
     print(f"  first index values: {index_head}")
+    # Older anndata (< 0.8) stored categoricals as integer codes in the column
+    # and the category names separately under "__categories/<column>".
+    legacy_cats = group["__categories"] if "__categories" in group else {}
     for col in group.attrs.get("column-order", []):
         col = col.decode() if isinstance(col, bytes) else col
         node = group[col]
-        if isinstance(node, h5py.Group) and "categories" in node:  # categorical
-            cats = [c.decode() if isinstance(c, bytes) else c for c in node["categories"][:]]
-            counts = np.bincount(node["codes"][:].clip(min=0), minlength=len(cats))
-            print(f"  - {col}: categorical, {len(cats)} categories")
+        codes = cats = None
+        if isinstance(node, h5py.Group) and "categories" in node:  # new format
+            cats, codes = node["categories"][:], node["codes"][:]
+        elif col in legacy_cats:  # legacy format
+            cats, codes = legacy_cats[col][:], node[:]
+        if cats is not None:
+            cats = [c.decode() if isinstance(c, bytes) else c for c in cats]
+            n_missing = int((codes < 0).sum())  # code -1 means NaN
+            counts = np.bincount(codes[codes >= 0], minlength=len(cats))
+            print(f"  - {col}: categorical, {len(cats)} categories, {n_missing:,} missing")
             order = np.argsort(-counts)
             for i in order[:max_categories]:
                 print(f"        {cats[i]!s:<35} {counts[i]:>7,}")
@@ -60,8 +72,9 @@ def _dataframe_summary(group, max_categories):
         elif isinstance(node, h5py.Dataset):
             vals = node[:]
             if vals.dtype.kind in "biuf":
-                print(f"  - {col}: {vals.dtype}, min={vals.min()}, max={vals.max()}, "
-                      f"n_unique={len(np.unique(vals))}")
+                n_nan = int(np.isnan(vals).sum()) if vals.dtype.kind == "f" else 0
+                print(f"  - {col}: {vals.dtype}, min={np.nanmin(vals)}, max={np.nanmax(vals)}, "
+                      f"n_unique={len(np.unique(vals))}, n_nan={n_nan:,}")
             else:
                 uniq = np.unique(vals)
                 print(f"  - {col}: {vals.dtype}, n_unique={len(uniq)}, e.g. {list(uniq[:3])}")
