@@ -1,0 +1,43 @@
+# CLAUDE.md
+
+Learning project: predicting single-cell surface protein (ADT) from RNA (GEX)
+in CITE-seq, with a focus on within-cell-type variation and donor-based splits.
+It re-examines a known problem and does not propose a new method.
+
+## Working style
+- Talk to the user in Turkish. Code, comments, README and commit messages in English.
+- Each phase: explain (biology, math, literature) -> code in small steps ->
+  interpret the output together -> 2-3 concept questions. Do not start the next
+  phase without the user's approval.
+- Never invent results or references. Mark guesses as verified / not verified.
+- Ask before long or memory-heavy operations. Never densify the full matrix.
+
+## Environment
+- Intel Mac (x86_64), 16 GB RAM. Everything runs locally; Google Colab is only a fallback.
+- `.venv` (Python 3.10). Install with
+  `uv pip install --python .venv/bin/python --only-binary llvmlite --only-binary numba -r requirements.txt`.
+- `numpy<2` is pinned because Phase 4 uses `torch==2.2.2` (the last Intel-Mac build), installed separately.
+- Paths come from `src/citeseq/paths.py`. Reusable code goes in `src/citeseq/`, one notebook per phase in `notebooks/`.
+- Fixed random seeds. Learned preprocessing (scaling, PCA, HVG selection) is fit on the training split only.
+  The test split is used once, at the end.
+
+## Data facts (verified from the file)
+- `data/raw/GSE194122_openproblems_neurips2021_cite_BMMC_processed.h5ad` (GEO GSE194122).
+  The file uses the legacy anndata categorical encoding (`obs/__categories`).
+- 90,261 cells x 14,087 features: 13,953 GEX + 134 ADT, separated by `var['feature_types']`.
+- **9 donors** (`obs['DonorNumber']`), **4 sites** (`obs['Site']`), **12 samples** = site x donor (`obs['batch']`).
+- donor1 was measured at all 4 sites and contributes ~34% of cells. Donors 2-9 each come
+  from a single site, so the donor and site effects are confounded.
+- **Donor splits group by `DonorNumber`, never by `batch`.**
+- `layers['counts']` holds raw counts for both blocks.
+  `X` (GEX) = `counts / GEX_size_factors`, with no log. Some size factors are implausibly
+  small, so normalize GEX from counts ourselves.
+  `X` (ADT) = per-cell CLR over 140 features (134 + 6 isotypes).
+- `obsm['ADT_isotype_controls']` is CLR-transformed, not raw.
+- **Do not use `obs['GEX_phase']`** (~65% G2M, not plausible).
+- `obs['is_train']` is the competition's own split. We build our own splits.
+
+## Metrics
+Per protein: Pearson over all test cells; within-cell-type Pearson (types with
+enough cells, weighted and unweighted by cell count); RMSE. The cell-type-mean
+baseline uses labels, and this must be stated in the report.
