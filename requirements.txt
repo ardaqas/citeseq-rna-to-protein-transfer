@@ -20,6 +20,9 @@ scikit-learn
 matplotlib
 seaborn
 umap-learn
+# pynndescent 0.7 returns scipy csr_array, which scanpy 1.11.5's neighbors()
+# cannot handle (no .getnnz) on datasets large enough to use pynndescent.
+pynndescent<0.6
 jupyterlab
 ipykernel
 pytest>=7.0
