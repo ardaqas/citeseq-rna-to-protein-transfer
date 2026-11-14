@@ -10,7 +10,10 @@
 anndata>=0.10
 scanpy>=1.10
 h5py>=3.8
-numpy
+# numpy<2: torch 2.2.2 (the last release with Intel-Mac wheels, used in
+# Phase 4) is built against NumPy 1.x. Pinned now so every phase uses the
+# same numpy.
+numpy<2
 pandas
 scipy
 scikit-learn
