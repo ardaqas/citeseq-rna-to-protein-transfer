@@ -47,6 +47,8 @@ def pearson_columns(a, b):
     exactly (max == min) before centering, because centering a constant column
     can leave tiny floating-point residues that would give a meaningless r.
     """
+    if a.shape[0] == 0:  # no cells: correlation undefined
+        return np.full(a.shape[1], np.nan)
     const = (a.max(axis=0) == a.min(axis=0)) | (b.max(axis=0) == b.min(axis=0))
     a = a - a.mean(axis=0)
     b = b - b.mean(axis=0)

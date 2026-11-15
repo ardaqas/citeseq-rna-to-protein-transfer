@@ -100,3 +100,8 @@ def test_no_group_large_enough_gives_nan_summary():
     long = within_group_pearson(rna, rna, np.array(["a"] * 10 + ["b"] * 10), min_cells=50)
     s = summarize_within(long, 1).loc[0]
     assert len(long) == 0 and np.isnan(s["weighted_mean"]) and s["n_groups"] == 0
+
+
+def test_pearson_no_rows_is_nan():
+    r = pearson_columns(np.empty((0, 3)), np.empty((0, 3)))
+    assert r.shape == (3,) and np.isnan(r).all()
