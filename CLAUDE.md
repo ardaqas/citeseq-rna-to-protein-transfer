@@ -58,6 +58,11 @@ It re-examines a known problem and does not propose a new method.
   (MLP [1024, 512], dropout 0.3, wd 1e-4, AdamW lr 1e-3, batch 512, early stopping patience 15).
   Validation: 0.794 overall, 0.446 within type, 0.114 within type x sample; seed SD <= 0.003.
   Checkpoints are in data/processed/phase4_checkpoints (gitignored).
+- **Phase 5 done** (`notebooks/05_final_evaluation.ipynb`, run once; saved fold predictions in
+  data/processed/phase5). The test sets are now USED. Do not tune anything or change mappings based on them.
+  Metric 3 for whole site folds was added afterwards from saved predictions (disclosed).
+  Key results: shift captured R 0.43/0.62 (ridge/MLP) -> C 0.03-0.07; within type x sample 0.10-0.13 everywhere;
+  on unseen sites ridge ~ MLP ~ cell-type mean overall (0.648 / 0.646 / 0.641).
 - **Test set rule:** do not evaluate test cells until all models (incl. Phase 4) are frozen; then use it once.
 - Within-type metric threshold: >= 50 cells of a type in the evaluated part, for every split
   (random split: 34 types in val, 34 in test).

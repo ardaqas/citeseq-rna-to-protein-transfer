@@ -5,7 +5,7 @@ protein abundance be predicted from RNA in single cells, and how much of that
 success comes from cell-type identity versus within-cell-type variation?
 It does not propose a new method.
 
-> Status: Phases 0-4 done (Phases 3-4: validation only). Results and figures are added phase by phase.
+> Status: Phases 0-5 done (Phase 5 = final test evaluation, run once). Results and figures are added phase by phase.
 
 ## Data
 
@@ -330,6 +330,53 @@ Results (validation only; primary set; median over proteins, mean ± SD over 3 s
   Within cell type x sample it gains only +0.01. Whether this part transfers to unseen samples is what
   Phase 5 tests.
 - **Seeds:** seed-to-seed SD is <= 0.003 for every metric.
+
+### Phase 5: final evaluation (test sets, evaluated once)
+
+`notebooks/05_final_evaluation.ipynb`, run once with the design pre-registered above (commit `fa39914`).
+No setting or mapping was changed afterwards. Primary set (110 proteins); ridge 3a; MLP seed 0 in D/C,
+3 seeds on R (SD <= 0.006).
+
+| Report group | within type x sample r: ridge / MLP | shift captured: ridge / MLP | overall Pearson: ridge / MLP / cell-type mean |
+|---|---|---|---|
+| R test (samples seen) | 0.099 / 0.109 | 0.43 / 0.62 | 0.736 / 0.792 / 0.643 |
+| D donors 2-9 (donor unseen, site seen) | 0.122 / 0.131 | 0.18 / 0.25 | per fold in CSV |
+| D donor1 (donor unseen, sites seen) | 0.108 / 0.121 | 0.14 / 0.22 | 0.695 / 0.735 / 0.626 |
+| C donor1 cells (site unseen) | 0.109 / 0.113 | 0.05 / 0.03 | see site folds |
+| C other donors (site and donor unseen) | 0.119 / 0.118 | 0.07 / 0.07 | see site folds |
+| C, mean of the 4 site folds | — | — | 0.648 / 0.646 / 0.641 |
+
+**Against the pre-registered expectations**
+- **Metric 1** (about 0.10 everywhere, not discriminating): **met.** 0.10-0.13 in every group.
+- **Metric 2** (only C can contradict the sample-signature hypothesis): **not contradicted.** On unseen
+  sites, the models capture 3-7% of the between-sample shift, close to the cell-type-mean baseline. On the
+  random split they capture 43-62%.
+- **Site vs. donor: mixed.**
+  - In C, donor1 cells do not show smaller bias than the other donors. This is consistent with a
+    site-driven shift and does not support a donor-driven one.
+  - But the D-donor1 fold does not show the small bias predicted for a site-driven shift (shift
+    captured 0.14). Its pooled within-type r (0.20) is above 0.10, as predicted.
+- **Metric 3** (unseen sites clearly below 0.34, closer to metric 1): **met.** Ridge 0.07-0.19 per site
+  fold (mean 0.13) vs 0.34 on the random split.
+- **Disclosed deviation:** metric 3 for whole site folds was omitted in the first run and added afterwards
+  from saved predictions, without refitting.
+
+**What this says about the research question (interpretation)**
+- With a random split, RNA predicts protein far better than cell-type identity, both overall and within
+  cell types. But much of the within-type advantage comes from predicting sample-level shifts for samples
+  seen in training.
+- On an unseen site:
+  - That shift is not transferred.
+  - The multi-gene models are only marginally better than the label-based cell-type mean overall.
+  - The MLP's advantage over ridge disappears.
+- What does carry over is a modest within-sample, cell-level signal (within type x sample r about 0.11-0.12),
+  well above the protein's own gene (about 0.06).
+- Whether the non-transferable shift is technical (e.g. site-dependent ADT background) or biological
+  cannot be settled with this design. The site-split results point more to site than to donor.
+- Overall accuracy on unseen sites ranges from 0.45 (site3) to 0.81 (site1). The two weakest sites are the
+  ones with low ADT depth and a high isotype share; that this explains it is a hypothesis.
+- Tables: `results/phase5_report_groups.csv`, `results/phase5_per_fold.csv`, `results/phase5_m3_site_folds.csv`,
+  `results/phase5_excluded_cell_types.csv`.
 
 `obs['GEX_phase']` (cell-cycle phase) is not used: it labels ~65% of bone marrow
 cells as G2M, which is not plausible.
