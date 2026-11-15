@@ -20,23 +20,26 @@ def _read_dataframe(group):
     return df
 
 
-def load_cite(path, matrix="layers/counts", cell_mask=None, chunk_rows=5000):
+def load_cite(path, matrix="layers/counts", cell_mask=None, var_mask=None, chunk_rows=5000):
     """Return AnnData with `matrix` as X, plus obs, var and dense obsm entries.
 
     Parameters
     ----------
     matrix : "layers/counts" (raw counts) or "X" (provided normalized values)
     cell_mask : optional boolean array (n_cells,) to load only some cells.
-        The file is still streamed in chunks, so memory scales with the subset.
+    var_mask : optional boolean array (n_vars,) to load only some features,
+        e.g. var["feature_types"] == "ADT".
+    The file is streamed in chunks, so memory scales with the selected subset.
     """
     with h5py.File(path, "r") as f:
         obs = _read_dataframe(f["obs"])
         var = _read_dataframe(f["var"])
-        if cell_mask is None:
-            cell_mask = np.ones(len(obs), dtype=bool)
-        cell_mask = np.asarray(cell_mask, dtype=bool)
+        cell_mask = np.ones(len(obs), bool) if cell_mask is None else np.asarray(cell_mask, bool)
+        var_idx = np.arange(len(var)) if var_mask is None else np.flatnonzero(np.asarray(var_mask, bool))
+        var = var.iloc[var_idx]
 
-        blocks = [block[cell_mask[r0:r1]] for r0, r1, block in iter_csr_chunks(f, matrix, chunk_rows)]
+        blocks = [block[cell_mask[r0:r1]][:, var_idx]
+                  for r0, r1, block in iter_csr_chunks(f, matrix, chunk_rows)]
         X = sp.vstack(blocks, format="csr")
 
         obsm = {}
