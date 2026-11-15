@@ -1,135 +1,135 @@
-protein,genes,mapping_type,note
-CD86,CD86,direct,
-CD274,CD274,direct,PD-L1
-CD270,TNFRSF14,direct,HVEM
-CD155,PVR,direct,
-CD112,NECTIN2,direct,old symbol PVRL2
-CD47,CD47,direct,
-CD48,CD48,direct,
-CD40,CD40,direct,
-CD154,CD40LG,direct,
-CD52,CD52,direct,
-CD3,CD3E,complex,TCR/CD3 complex (CD3D/E/G); gene of the epsilon chain used
-CD8,CD8A,complex,CD8 alpha/beta; alpha chain used
-CD56,NCAM1,direct,
-CD19,CD19,direct,
-CD33,CD33,direct,
-CD11c,ITGAX,direct,
-HLA-A-B-C,HLA-A;HLA-B;HLA-C,complex,pan class I antibody; counts of the three genes summed
-CD45RA,PTPRC,isoform,CD45 splice isoform; 3' RNA cannot distinguish isoforms
-CD123,IL3RA,direct,
-CD7,CD7,direct,
-CD105,ENG,direct,
-CD49f,ITGA6,direct,
-CD194,CCR4,direct,
-CD4,CD4,direct,
-CD44,CD44,direct,
-CD14,CD14,direct,
-CD16,FCGR3A,direct,FCGR3B is the neutrophil form
-CD25,IL2RA,direct,
-CD45RO,PTPRC,isoform,CD45 splice isoform; 3' RNA cannot distinguish isoforms
-CD279,PDCD1,direct,PD-1
-TIGIT,TIGIT,direct,
-CD20,MS4A1,direct,
-CD335,NCR1,direct,
-CD31,PECAM1,direct,
-Podoplanin,PDPN,direct,
-CD146,MCAM,direct,
-IgM,IGHM,direct,heavy-chain constant gene; also secreted form
-CD5,CD5,direct,
-CD195,CCR5,direct,
-CD32,FCGR2A,complex,antibody may also bind FCGR2B
-CD196,CCR6,direct,
-CD185,CXCR5,direct,
-CD103,ITGAE,direct,
-CD69,CD69,direct,
-CD62L,SELL,direct,
-CD161,KLRB1,direct,
-CD152,CTLA4,direct,
-CD223,LAG3,direct,
-KLRG1,KLRG1,direct,
-CD27,CD27,direct,
-CD107a,LAMP1,direct,mostly intracellular; surface after degranulation
-CD95,FAS,direct,
-CD134,TNFRSF4,direct,OX40
-HLA-DR,HLA-DRA,complex,DR alpha/beta; monomorphic alpha chain used
-CD1c,CD1C,direct,
-CD11b,ITGAM,direct,
-CD64,FCGR1A,direct,
-CD141,THBD,direct,
-CD1d,CD1D,direct,
-CD314,KLRK1,direct,NKG2D
-CD35,CR1,direct,
-CD57,B3GAT1,indirect,CD57 is a carbohydrate epitope (HNK-1); B3GAT1 is the enzyme that makes it
-CD272,BTLA,direct,
-CD278,ICOS,direct,
-CD58,CD58,direct,
-CD39,ENTPD1,direct,
-CX3CR1,CX3CR1,direct,
-CD24,CD24,direct,
-CD21,CR2,direct,
-CD11a,ITGAL,direct,
-CD79b,CD79B,direct,
-CD244,CD244,direct,
-CD169,SIGLEC1,direct,
-integrinB7,ITGB7,direct,
-CD268,TNFRSF13C,direct,BAFF-R
-CD42b,GP1BA,direct,
-CD54,ICAM1,direct,
-CD62P,SELP,direct,
-CD119,IFNGR1,direct,
-TCR,TRAC;TRBC1;TRBC2,complex,alpha/beta TCR; constant-region genes summed
-CD192,CCR2,direct,
-CD122,IL2RB,direct,
-FceRIa,FCER1A,direct,
-CD41,ITGA2B,direct,
-CD137,TNFRSF9,direct,4-1BB
-CD163,CD163,direct,
-CD83,CD83,direct,
-CD124,IL4R,direct,
-CD13,ANPEP,direct,
-CD2,CD2,direct,
-CD226,CD226,direct,
-CD29,ITGB1,direct,
-CD303,CLEC4C,direct,
-CD49b,ITGA2,direct,
-CD81,CD81,direct,
-IgD,IGHD,direct,heavy-chain constant gene
-CD18,ITGB2,direct,
-CD28,CD28,direct,
-CD38,CD38,direct,
-CD127,IL7R,direct,
-CD45,PTPRC,direct,all CD45 isoforms
-CD22,CD22,direct,
-CD71,TFRC,direct,
-CD26,DPP4,direct,
-CD115,CSF1R,direct,
-CD63,CD63,direct,mostly intracellular (late endosome)
-CD304,NRP1,direct,
-CD36,CD36,direct,
-CD172a,SIRPA,direct,
-CD72,CD72,direct,
-CD158,KIR2DL1,complex,antibody binds several KIR2D receptors; KIR genes are polymorphic and similar
-CD93,CD93,direct,
-CD49a,ITGA1,direct,
-CD49d,ITGA4,direct,
-CD73,NT5E,direct,
-CD9,CD9,direct,
-TCRVa7.2,TRAV1-2,v_segment,TCR V segment; far from the 3' end
-TCRVd2,TRDV2,v_segment,TCR V segment; far from the 3' end
-LOX-1,OLR1,direct,
-CD158b,KIR2DL2;KIR2DL3,complex,antibody binds KIR2DL2/L3; KIR genes are polymorphic and similar
-CD158e1,KIR3DL1,complex,KIR genes are polymorphic and similar
-CD142,F3,direct,tissue factor
-CD319,SLAMF7,direct,
-CD352,SLAMF6,direct,
-CD94,KLRD1,direct,
-CD162,SELPLG,direct,
-CD85j,LILRB1,direct,
-CD23,FCER2,direct,
-CD328,SIGLEC7,direct,
-HLA-E,HLA-E,direct,
-CD82,CD82,direct,
-CD101,CD101,direct,
-CD88,C5AR1,direct,
-CD224,GGT1,direct,
+protein,genes,mapping_type,analysis_set,set_reason,note
+CD86,CD86,direct,primary,,
+CD274,CD274,direct,unavailable,"gene not in the 13,953 measured genes",PD-L1
+CD270,TNFRSF14,direct,primary,,HVEM
+CD155,PVR,direct,primary,,
+CD112,NECTIN2,direct,primary,,old symbol PVRL2
+CD47,CD47,direct,primary,,
+CD48,CD48,direct,primary,,
+CD40,CD40,direct,primary,,
+CD154,CD40LG,direct,primary,,
+CD52,CD52,direct,primary,,
+CD3,CD3E,complex,primary,,TCR/CD3 complex (CD3D/E/G); gene of the epsilon chain used
+CD8,CD8A,complex,primary,,CD8 alpha/beta; alpha chain used
+CD56,NCAM1,direct,primary,,
+CD19,CD19,direct,primary,,
+CD33,CD33,direct,primary,,
+CD11c,ITGAX,direct,primary,,
+HLA-A-B-C,HLA-A;HLA-B;HLA-C,complex,primary,,pan class I antibody; counts of the three genes summed
+CD45RA,PTPRC,isoform,secondary,splice isoform of PTPRC; same RNA as CD45/CD45RO,CD45 splice isoform; 3' RNA cannot distinguish isoforms
+CD123,IL3RA,direct,primary,,
+CD7,CD7,direct,primary,,
+CD105,ENG,direct,primary,,
+CD49f,ITGA6,direct,primary,,
+CD194,CCR4,direct,primary,,
+CD4,CD4,direct,primary,,
+CD44,CD44,direct,primary,,
+CD14,CD14,direct,primary,,
+CD16,FCGR3A,direct,secondary,paralog ambiguity (FCGR3A/FCGR3B; FCGR3B not in data),FCGR3B is the neutrophil form
+CD25,IL2RA,direct,primary,,
+CD45RO,PTPRC,isoform,secondary,splice isoform of PTPRC; same RNA as CD45/CD45RA,CD45 splice isoform; 3' RNA cannot distinguish isoforms
+CD279,PDCD1,direct,unavailable,"gene not in the 13,953 measured genes",PD-1
+TIGIT,TIGIT,direct,primary,,
+CD20,MS4A1,direct,primary,,
+CD335,NCR1,direct,primary,,
+CD31,PECAM1,direct,primary,,
+Podoplanin,PDPN,direct,unavailable,"gene not in the 13,953 measured genes",
+CD146,MCAM,direct,unavailable,"gene not in the 13,953 measured genes",
+IgM,IGHM,direct,primary,,heavy-chain constant gene; also secreted form
+CD5,CD5,direct,primary,,
+CD195,CCR5,direct,primary,,
+CD32,FCGR2A;FCGR2B,complex,secondary,paralog ambiguity (FCGR2A/FCGR2B),antibody binds CD32A and CD32B; B cells express FCGR2B; counts of both genes summed
+CD196,CCR6,direct,primary,,
+CD185,CXCR5,direct,primary,,
+CD103,ITGAE,direct,primary,,
+CD69,CD69,direct,primary,,
+CD62L,SELL,direct,primary,,
+CD161,KLRB1,direct,primary,,
+CD152,CTLA4,direct,primary,,
+CD223,LAG3,direct,primary,,
+KLRG1,KLRG1,direct,primary,,
+CD27,CD27,direct,primary,,
+CD107a,LAMP1,direct,secondary,mostly intracellular,mostly intracellular; surface after degranulation
+CD95,FAS,direct,primary,,
+CD134,TNFRSF4,direct,primary,,OX40
+HLA-DR,HLA-DRA,complex,primary,,DR alpha/beta; monomorphic alpha chain used
+CD1c,CD1C,direct,primary,,
+CD11b,ITGAM,direct,primary,,
+CD64,FCGR1A,direct,primary,,
+CD141,THBD,direct,primary,,
+CD1d,CD1D,direct,primary,,
+CD314,KLRK1,direct,primary,,NKG2D
+CD35,CR1,direct,primary,,
+CD57,B3GAT1,indirect,unavailable,"gene not in the 13,953 measured genes",CD57 is a carbohydrate epitope (HNK-1); B3GAT1 is the enzyme that makes it
+CD272,BTLA,direct,primary,,
+CD278,ICOS,direct,primary,,
+CD58,CD58,direct,primary,,
+CD39,ENTPD1,direct,primary,,
+CX3CR1,CX3CR1,direct,primary,,
+CD24,CD24,direct,primary,,
+CD21,CR2,direct,primary,,
+CD11a,ITGAL,direct,primary,,
+CD79b,CD79B,direct,primary,,
+CD244,CD244,direct,primary,,
+CD169,SIGLEC1,direct,unavailable,"gene not in the 13,953 measured genes",
+integrinB7,ITGB7,direct,primary,,
+CD268,TNFRSF13C,direct,primary,,BAFF-R
+CD42b,GP1BA,direct,primary,,
+CD54,ICAM1,direct,primary,,
+CD62P,SELP,direct,unavailable,"gene not in the 13,953 measured genes",
+CD119,IFNGR1,direct,primary,,
+TCR,TRAC;TRBC1;TRBC2,complex,primary,,alpha/beta TCR; constant-region genes summed
+CD192,CCR2,direct,primary,,
+CD122,IL2RB,direct,primary,,
+FceRIa,FCER1A,direct,primary,,
+CD41,ITGA2B,direct,unavailable,"gene not in the 13,953 measured genes",
+CD137,TNFRSF9,direct,primary,,4-1BB
+CD163,CD163,direct,primary,,
+CD83,CD83,direct,primary,,
+CD124,IL4R,direct,primary,,
+CD13,ANPEP,direct,primary,,
+CD2,CD2,direct,primary,,
+CD226,CD226,direct,primary,,
+CD29,ITGB1,direct,primary,,
+CD303,CLEC4C,direct,primary,,
+CD49b,ITGA2,direct,unavailable,"gene not in the 13,953 measured genes",
+CD81,CD81,direct,primary,,
+IgD,IGHD,direct,primary,,heavy-chain constant gene
+CD18,ITGB2,direct,primary,,
+CD28,CD28,direct,primary,,
+CD38,CD38,direct,primary,,
+CD127,IL7R,direct,primary,,
+CD45,PTPRC,direct,secondary,same PTPRC RNA as CD45RA/CD45RO,all CD45 isoforms
+CD22,CD22,direct,primary,,
+CD71,TFRC,direct,primary,,
+CD26,DPP4,direct,primary,,
+CD115,CSF1R,direct,primary,,
+CD63,CD63,direct,secondary,mostly intracellular,mostly intracellular (late endosome)
+CD304,NRP1,direct,primary,,
+CD36,CD36,direct,primary,,
+CD172a,SIRPA,direct,primary,,
+CD72,CD72,direct,primary,,
+CD158,KIR2DL1,complex,unavailable,"gene not in the 13,953 measured genes",antibody binds several KIR2D receptors; KIR genes are polymorphic and similar
+CD93,CD93,direct,primary,,
+CD49a,ITGA1,direct,primary,,
+CD49d,ITGA4,direct,primary,,
+CD73,NT5E,direct,primary,,
+CD9,CD9,direct,primary,,
+TCRVa7.2,TRAV1-2,v_segment,unavailable,"gene not in the 13,953 measured genes",TCR V segment; far from the 3' end
+TCRVd2,TRDV2,v_segment,unavailable,"gene not in the 13,953 measured genes",TCR V segment; far from the 3' end
+LOX-1,OLR1,direct,unavailable,"gene not in the 13,953 measured genes",
+CD158b,KIR2DL2;KIR2DL3,complex,unavailable,"gene not in the 13,953 measured genes",antibody binds KIR2DL2/L3; KIR genes are polymorphic and similar
+CD158e1,KIR3DL1,complex,unavailable,"gene not in the 13,953 measured genes",KIR genes are polymorphic and similar
+CD142,F3,direct,unavailable,"gene not in the 13,953 measured genes",tissue factor
+CD319,SLAMF7,direct,primary,,
+CD352,SLAMF6,direct,primary,,
+CD94,KLRD1,direct,primary,,
+CD162,SELPLG,direct,primary,,
+CD85j,LILRB1,direct,primary,,
+CD23,FCER2,direct,primary,,
+CD328,SIGLEC7,direct,primary,,
+HLA-E,HLA-E,direct,primary,,
+CD82,CD82,direct,primary,,
+CD101,CD101,direct,primary,,
+CD88,C5AR1,direct,primary,,
+CD224,GGT1,direct,unavailable,"gene not in the 13,953 measured genes",

@@ -54,6 +54,32 @@ size factors for GEX, CLR for ADT), but its QC thresholds do not match this file
 so the file was checked directly. Some GEX size factors are implausibly small
 (minimum ~0.0002), so this project normalizes GEX from `layers['counts']` itself.
 
+### Protein-gene mapping (frozen before results)
+
+`resources/protein_gene_map.csv` maps each of the 134 proteins to its gene(s) by hand.
+The mapping and the split into analysis sets were committed **before** any
+full-data correlation was computed.
+
+- When a protein maps to several genes, the raw counts of those genes are summed
+  before normalization (HLA-A/B/C, TRAC/TRBC1/TRBC2, FCGR2A/FCGR2B).
+- **Primary set (110 proteins):** direct mappings plus unambiguous complexes
+  (CD3 -> CD3E, CD8 -> CD8A, HLA-A-B-C, HLA-DR -> HLA-DRA, TCR). Headline results use only this set.
+- **Secondary set (7 proteins), reported separately:** CD45, CD45RA, CD45RO (all
+  compared with the same PTPRC RNA, differing only by splicing), CD107a, CD63
+  (mostly intracellular), CD32, CD16 (paralog ambiguity).
+- **Unavailable (17 proteins):** at least one mapped gene is not among the 13,953
+  genes in the file. Why these genes are missing has **not** been determined
+  yet. Results for 110 or 117 proteins do not generalize to all 134: the missing
+  proteins may be a systematically harder subset.
+
+Mapping changes:
+
+| Date | Change | Timing |
+|---|---|---|
+| 2026-11-15 | CD32: FCGR2A -> FCGR2A + FCGR2B | before results (subset results were not inspected) |
+
+Any change made after seeing results will be marked **post hoc** here.
+
 `obs['GEX_phase']` (cell-cycle phase) is not used: it labels ~65% of bone marrow
 cells as G2M, which is not plausible.
 
