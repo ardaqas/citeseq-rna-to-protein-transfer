@@ -54,6 +54,10 @@ It re-examines a known problem and does not propose a new method.
 - `pynndescent<0.6` is pinned (0.7 breaks scanpy 1.11.5 neighbors on large data).
 - Phase 3 done, **validation only**: `notebooks/03_baselines.ipynb`, split `results/splits/random_split.csv.gz`,
   frozen configs `results/phase3_frozen_configs.json` (ridge PCA: full rank 2000 PCs, alpha 1000; ridge HVG: alpha 1e4).
+- Phase 4 done, **validation only**: `notebooks/04_mlp.ipynb`; frozen `results/phase4_frozen_config.json`
+  (MLP [1024, 512], dropout 0.3, wd 1e-4, AdamW lr 1e-3, batch 512, early stopping patience 15).
+  Validation: 0.794 overall, 0.446 within type, 0.114 within type x sample; seed SD <= 0.003.
+  Checkpoints are in data/processed/phase4_checkpoints (gitignored).
 - **Test set rule:** do not evaluate test cells until all models (incl. Phase 4) are frozen; then use it once.
 - Within-type metric threshold: >= 50 cells of a type in the evaluated part, for every split
   (random split: 34 types in val, 34 in test).

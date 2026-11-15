@@ -5,7 +5,7 @@ protein abundance be predicted from RNA in single cells, and how much of that
 success comes from cell-type identity versus within-cell-type variation?
 It does not propose a new method.
 
-> Status: Phases 0-3 done (Phase 3: validation only). Results and figures are added phase by phase.
+> Status: Phases 0-4 done (Phases 3-4: validation only). Results and figures are added phase by phase.
 
 ## Data
 
@@ -312,6 +312,24 @@ Edits to this addendum, all made before any donor-split or site-split result:
   through early stopping) is wider than ridge's single alpha, and validation decides all of it. Its
   validation numbers are therefore likely to be somewhat more optimistic than ridge's. Only the test
   set, used once at the end, gives a fair comparison.
+
+Results (validation only; primary set; median over proteins, mean ± SD over 3 seeds):
+
+| | MLP [1024, 512], dropout 0.3 | ridge 3a | MLP - ridge |
+|---|---|---|---|
+| Pearson, all cells | 0.794 ± 0.001 | 0.733 | +0.061 |
+| within cell type (weighted) | 0.446 ± 0.000 | 0.337 | +0.109 |
+| within cell type x sample | 0.114 ± 0.003 | 0.104 | +0.010 |
+| RMSE | 0.289 ± 0.001 | 0.312 | -0.023 |
+
+- **Search:** 15 configurations, one validation-based grid extension (logged in
+  `results/phase4_frozen_config.json`). The width cap was not binding.
+- **Ranking by within type x sample** would pick a different configuration, but only by 0.0005, which is
+  well below the seed SD. In practice it is a tie.
+- **Where the MLP gains:** most of its gain over ridge within cell type (+0.11) is at the sample level.
+  Within cell type x sample it gains only +0.01. Whether this part transfers to unseen samples is what
+  Phase 5 tests.
+- **Seeds:** seed-to-seed SD is <= 0.003 for every metric.
 
 `obs['GEX_phase']` (cell-cycle phase) is not used: it labels ~65% of bone marrow
 cells as G2M, which is not plausible.
