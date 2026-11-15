@@ -177,6 +177,17 @@ across proteins (Pearson; RNA = log1p CP10k, protein = per-cell CLR).
   more within-type information.
 - Other open hypothesis: part of the within-type signal may be finer structure inside annotated types.
 
+### Phase 4: MLP (validation only)
+
+`notebooks/04_mlp.ipynb`.
+- Input: z-scored 2,000 HVGs, fit on training cells. Targets: all 134 proteins, standardized per protein.
+- Training: early stopping on validation loss. The configuration is chosen by mean validation Pearson.
+  The best configuration is trained with 3 seeds and reported as mean ± SD.
+- **Validation optimism:** the MLP's search space (architecture, dropout, weight decay, number of epochs
+  through early stopping) is wider than ridge's single alpha, and validation decides all of it. Its
+  validation numbers are therefore likely to be somewhat more optimistic than ridge's. Only the test
+  set, used once at the end, gives a fair comparison.
+
 `obs['GEX_phase']` (cell-cycle phase) is not used: it labels ~65% of bone marrow
 cells as G2M, which is not plausible.
 

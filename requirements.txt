@@ -6,7 +6,6 @@
 #   uv pip install --python .venv/bin/python \
 #       --only-binary llvmlite --only-binary numba -r requirements.txt
 # Exact working versions are in requirements-lock.txt.
-# torch is intentionally NOT listed here: it is installed separately in Phase 4.
 anndata>=0.10
 scanpy>=1.10
 h5py>=3.8
@@ -26,3 +25,7 @@ pynndescent<0.6
 jupyterlab
 ipykernel
 pytest>=7.0
+
+# Phase 4 (MLP). 2.2.2 is the last PyTorch release with Intel-Mac (x86_64) wheels
+# and needs numpy<2 (pinned above). CPU only.
+torch==2.2.2
