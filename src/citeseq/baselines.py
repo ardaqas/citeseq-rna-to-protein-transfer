@@ -74,10 +74,10 @@ class RidgePath:
     """
 
     def fit(self, X, Y, alphas):
-        X = np.asarray(X, dtype=np.float64)
+        Xc = np.array(X, dtype=np.float64, copy=True)  # one float64 copy, centered in place
         Y = np.asarray(Y, dtype=np.float64)
-        self.x_mean_, self.y_mean_ = X.mean(axis=0), Y.mean(axis=0)
-        Xc = X - self.x_mean_
+        self.x_mean_, self.y_mean_ = Xc.mean(axis=0), Y.mean(axis=0)
+        Xc -= self.x_mean_
         gram = Xc.T @ Xc
         xty = Xc.T @ (Y - self.y_mean_)
         eye = np.eye(gram.shape[0])

@@ -107,3 +107,10 @@ def test_feature_pipeline_fit_on_train_only():
     np.testing.assert_array_equal(f.pca_.components_, state[1])
     np.testing.assert_array_equal(f.scaler_.mean_, state[2])
     assert f.hvg_mask_.sum() == 50 and f.transform_pca(X[~tr], 5).shape == (100, 5)
+
+
+def test_split_handles_very_rare_labels():
+    obs = _obs()
+    obs.iloc[:2, obs.columns.get_loc("cell_type")] = ["only_one", "another_single"]
+    s = make_random_split(obs, seed=0)
+    assert len(s) == len(obs) and set(s.unique()) == {"train", "val", "test"}
