@@ -45,3 +45,22 @@ def load_split(path, obs_names):
     if len(missing):
         raise KeyError(f"{len(missing)} cells are not in the saved split")
     return s.loc[obs_names]
+
+
+def group_folds(obs, key):
+    """Leave-one-group-out folds: {group value: boolean test mask}, in sorted order."""
+    values = obs[key].astype(str).to_numpy()
+    return {g: values == g for g in sorted(pd.unique(values))}
+
+
+def inner_split(labels, frac=0.15, seed=0, min_per_class=10):
+    """Split training cells into (inner_train, inner_val) boolean masks, stratified by label."""
+    labels = pd.Series(np.asarray(labels).astype(str))
+    counts = labels.value_counts()
+    y = labels.where(~labels.isin(counts.index[counts < min_per_class]), "__rare__").to_numpy()
+    if 0 < (y == "__rare__").sum() < min_per_class:
+        y = np.where(y == "__rare__", counts.index[0], y)
+    idx = np.arange(len(y))
+    tr, va = train_test_split(idx, test_size=frac, stratify=y, random_state=seed)
+    m_tr = np.zeros(len(y), bool); m_tr[tr] = True
+    return m_tr, ~m_tr

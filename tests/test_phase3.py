@@ -132,3 +132,13 @@ def test_ridge_full_rank_pca_equals_ridge_on_unscaled_hvg():
         p_pca = RidgePath().fit(f.transform_pca(X[tr], k), Y[tr], [alpha]).predict(f.transform_pca(X[~tr], k), alpha)
         p_hvg = RidgePath().fit(f.hvg_dense(X[tr]), Y[tr], [alpha]).predict(f.hvg_dense(X[~tr]), alpha)
         np.testing.assert_allclose(p_pca, p_hvg, atol=1e-4)
+
+
+def test_hvg_fit_with_unused_batch_category():
+    rng = np.random.default_rng(8)
+    n, g = 300, 100
+    X = sp.csr_matrix(np.log1p(rng.poisson(rng.gamma(0.8, 2.0, size=g), size=(n, g)).astype(float)))
+    obs = _obs(n)
+    obs["batch"] = pd.Categorical(obs["batch"], categories=["s1", "s2", "held_out"])  # unused category
+    f = HVGPCAFeatures(n_top_genes=20, max_pcs=5).fit(X, obs, [f"g{i}" for i in range(g)])
+    assert f.hvg_mask_.sum() == 20

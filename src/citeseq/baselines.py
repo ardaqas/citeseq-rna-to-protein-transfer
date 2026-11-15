@@ -110,8 +110,11 @@ class HVGPCAFeatures:
         self.n_top_genes, self.max_pcs, self.seed = n_top_genes, max_pcs, seed
 
     def fit(self, X_train, obs_train, var_names, batch_key="batch"):
-        tmp = ad.AnnData(X=X_train, obs=obs_train[[batch_key]].copy(),
-                         var=pd.DataFrame(index=pd.Index(var_names)))
+        obs_b = obs_train[[batch_key]].copy()
+        # drop categories with no training cells (e.g. the held-out sample in a donor split);
+        # scanpy would otherwise try to compute HVGs for an empty batch
+        obs_b[batch_key] = obs_b[batch_key].astype(str).astype("category")
+        tmp = ad.AnnData(X=X_train, obs=obs_b, var=pd.DataFrame(index=pd.Index(var_names)))
         hv = sc.pp.highly_variable_genes(tmp, n_top_genes=self.n_top_genes, batch_key=batch_key,
                                          flavor="seurat", inplace=False)
         self.hvg_mask_ = hv["highly_variable"].to_numpy()

@@ -59,8 +59,10 @@ def train_mlp(X_tr, Z_tr, X_va, Z_va, hidden, dropout, weight_decay, seed, lr=1e
     """Train one MLP with early stopping on validation MSE (standardized targets).
 
     X_* : float32 inputs; Z_* : standardized float32 targets.
-    Returns dict(model, history, best_epoch, config). With `checkpoint`, a finished
-    run is saved there and re-used on the next call.
+    Returns dict(model, history, best_epoch, config). `best_epoch` is a 0-based index
+    into history (1-based epoch = best_epoch + 1); training stops `patience` epochs
+    after it, so len(history) == best_epoch + 1 + patience unless max_epochs is hit.
+    With `checkpoint`, a finished run is saved there and re-used on the next call.
     """
     config = dict(hidden=list(hidden), dropout=dropout, weight_decay=weight_decay, seed=seed,
                   lr=lr, batch_size=batch_size, max_epochs=max_epochs, patience=patience)
