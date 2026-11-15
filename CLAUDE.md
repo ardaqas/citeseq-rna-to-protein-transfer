@@ -58,6 +58,11 @@ It re-examines a known problem and does not propose a new method.
 - Within-type metric threshold: >= 50 cells of a type in the evaluated part, for every split
   (random split: 34 types in val, 34 in test).
 - Grid rule: if the best setting is on a grid edge, extend the grid using validation only and log it.
+  Exception agreed with the user: MLP first hidden layer capped at 2,048 units (logged).
+- Phase 3 follow-up (03b): ridge within type 0.34 -> within type x sample 0.10 (same cells 0.33 -> 0.10;
+  donor1 only, within type x site: 0.37 -> 0.10). Write "sample-signature learning" only as a hypothesis.
+- **Pre-registered Phase 5 expectation** is in the README (recorded before the donor split). Do not edit it
+  after seeing donor-split results; add any interpretation below it instead.
 
 ## Metrics
 Per protein: Pearson over all test cells; within-cell-type Pearson (types with

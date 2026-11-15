@@ -166,16 +166,39 @@ across proteins (Pearson; RNA = log1p CP10k, protein = per-cell CLR).
 - Within-type metric threshold, fixed before any test evaluation: >= 50 cells of a type in the evaluated
   part, for every split. Random split: 34 evaluable types in validation and 34 in test. The donor split
   is reported in Phase 5.
-- **Within cell type x sample** (`notebooks/03b_phase3_followups.ipynb`, validation): holding the
-  sample fixed as well lowers ridge's within-type Pearson from 0.34 to 0.10. The own gene barely changes
-  (0.08 -> 0.06; Phase 2: 0.07 -> 0.06). About two thirds of ridge's within-type correlation is therefore
-  between-sample variation inside a cell type. This fits ridge using sample/site signatures in RNA, and
-  may also include real donor differences; which of the two is not tested. Only 72 type x sample groups
-  reach 50 validation cells, so the comparison covers partly different cells.
+- **Within cell type x sample** (`notebooks/03b_phase3_followups.ipynb`, validation). Holding the sample
+  fixed as well lowers ridge's within-type Pearson from 0.34 to 0.10. The own gene barely changes
+  (0.08 -> 0.06; Phase 2: 0.07 -> 0.06).
+  - Of ridge's 0.34 within cell type, about **0.23 is at the sample level** (technical and donor
+    differences, which this design cannot separate). About **0.10 is cell-to-cell variation within a
+    sample**. This is a heuristic split (a difference of two correlations), not an exact variance
+    decomposition.
+  - The result holds on exactly the same cells (8,454 cells in 72 type x sample groups): 0.33 -> 0.10.
+    The own gene stays at 0.06.
+  - **donor1 only** (one donor, four sites): ridge 0.37 within type -> 0.10 within type x site. With the
+    donor fixed, most of the between-sample part comes from site, i.e. it is technical, at least for
+    donor1.
+  - *Hypothesis, not established:* ridge may pick up sample/site signatures in RNA. Alternatively, site
+    may affect RNA and protein together. This was not tested.
 - **PCA components** (validation): with 50 PCs ridge keeps 95% of its full-rank overall Pearson
-  (0.70 vs 0.73) but only 81% of its within-type Pearson (0.27 vs 0.34). PCA truncation costs relatively
-  more within-type information.
+  (0.70 vs 0.73) but only 81% of its within-type Pearson (0.27 vs 0.34), and 85% of its within type x
+  sample Pearson (0.088 vs 0.104). PCA truncation costs relatively more within-type information.
 - Other open hypothesis: part of the within-type signal may be finer structure inside annotated types.
+
+### Pre-registered expectation for Phase 5 (written before any donor-split result)
+
+Recorded 2026-11-15, before the donor split was built or evaluated.
+
+- **Metric:** ridge's within-cell-type Pearson (median over the 110 primary proteins, cell-weighted) on
+  held-out donors, compared with the random-split validation values: 0.34 within type, 0.10 within
+  type x sample.
+- **If it approaches 0.10**, this supports the sample-signature hypothesis: the extra within-type
+  signal in the random split comes from samples seen in training.
+- **If it stays near 0.34**, ridge learns something that generalizes across samples.
+- Values in between are read as partial support. Within type x sample will be reported for the donor
+  split too.
+- Caveat known in advance: a donor split also removes those donors' cells from training and, except for
+  donor1, holds out their site. A drop can therefore have more than one cause.
 
 ### Phase 4: MLP (validation only)
 
