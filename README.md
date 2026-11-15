@@ -219,7 +219,7 @@ Recorded 2026-11-15, before the donor split was built or evaluated.
 - Caveat known in advance: a donor split also removes those donors' cells from training and, except for
   donor1, holds out their site. A drop can therefore have more than one cause.
 
-#### Correction addendum (2026-11-16, still before any donor-split or site-split result)
+#### Correction addendum (2026-11-15, still before any donor-split or site-split result)
 
 The expectation above is flawed. It is kept unchanged for the record and is replaced by the one below.
 
@@ -237,8 +237,15 @@ The expectation above is flawed. It is kept unchanged for the record and is repl
   every learned step is refit on that fold's training cells only: HVGs, scaling, PCA, ridge weights,
   target scaling.
 - Hypothesis judgments use **ridge 3a**, which is deterministic. The cell-type-mean baseline is needed
-  as a reference for metric 2. The own-gene model and the MLP are reported alongside. The number of MLP
-  seeds per fold is fixed and recorded here before Phase 5 runs.
+  as a reference for metric 2. The own-gene model and the MLP are reported alongside.
+- **MLP seeds:** 3 seeds on split R; 1 seed (seed 0) per fold in D and C. The Phase 4 seed-to-seed SD is
+  reported next to the fold results, so it can be compared with the differences between folds.
+- **MLP early stopping in D and C folds:** by an **inner validation set**: 15% of the fold's *training*
+  cells, drawn at random, stratified by cell type, seed 0. The MLP trains on the remaining 85%. Test-donor
+  and test-site cells never enter training, early stopping, or any scaling.
+  - Chosen over a fixed epoch count because it repeats the Phase 4 procedure exactly.
+  - Known cost: in these folds the MLP sees 15% fewer training cells than ridge.
+  - On split R the MLP keeps the Phase 4 setup: early stopping on the random-split validation part.
 - Splits:
   - **R** — the existing random split, test part, used once.
   - **D** — leave-one-donor-out, 9 folds. donor2-9 folds have 1 test sample each; the donor1 fold has
@@ -246,6 +253,9 @@ The expectation above is flawed. It is kept unchanged for the record and is repl
   - **C** — leave-one-site-out, 4 folds. Each test site has 3 samples. Test cells are reported in two
     groups: **donor1** (donor seen in training, site not) and **other donors** (neither seen).
 - All metrics: 110 primary proteins; groups need >= 50 test cells.
+- **Cell types absent from a fold's training cells** (e.g. cDC1 and T prog cycling in the donor7 fold)
+  are excluded from metric 2. The cell-type mean cannot predict them, so their bias has no reference. The
+  number of excluded types and cells is reported per fold.
 
 **Metrics, for every split**
 
@@ -253,11 +263,13 @@ The expectation above is flawed. It is kept unchanged for the record and is repl
    the random split (validation: 0.104).
 2. **Standardized bias per (cell type x test sample) group:** `b = (mean prediction - mean truth) / SD`,
    where SD is the protein's standard deviation in the fold's training cells.
-   - Per protein: cell-weighted mean of |b| over groups. Reported as the median over proteins.
+   - Summary: cell-weighted mean of |b| over all (primary protein, group) pairs, per fold and per split.
    - The same number is computed for the random split.
    - Reference: the cell-type-mean baseline predicts the training mean of the type, so its |b| measures
      how far the test sample's type mean lies from training, i.e. the sample shift.
-   - **Shift captured** = 1 - |b|(ridge) / |b|(cell-type mean), per protein, then the median.
+   - **Shift captured** = 1 - Σ|b|(ridge) / Σ|b|(cell-type mean). Both sums run over the same (primary
+     protein, group) pairs, each |b| weighted by the group's cell count. This is a **ratio of sums**,
+     not a median of per-group ratios.
 3. **Pooled within cell type Pearson**, only for test sets with >= 2 samples (donor1 fold: 4 samples;
    each site fold: 3), reported together with the number of samples.
 
@@ -268,10 +280,13 @@ The expectation above is flawed. It is kept unchanged for the record and is repl
   having seen the sample.
 - **Metric 2 (the main test):**
   - The sample-signature hypothesis predicts small |b| for samples seen in training (split R) and clearly
-    larger |b| for unseen samples (D folds for donors 2-9; C folds). Shift captured would be near 0,
-    i.e. close to the cell-type-mean baseline.
-  - If ridge's |b| stays small and shift captured stays well above 0 on unseen samples, ridge transfers
-    sample shifts, and the hypothesis is not supported.
+    larger |b| for unseen samples. Shift captured would then be near 0, i.e. close to the cell-type-mean
+    baseline.
+  - **Only the C split can contradict the hypothesis.** In the C folds, if ridge's |b| stays small and
+    shift captured stays well above 0 on an unseen site, ridge transfers sample shifts to unseen sites.
+    Even then, this is not evidence for biology: it only shows that the shift can be predicted from RNA.
+  - **In D, a small |b| is not informative about the hypothesis.** The test donor's site is in training,
+    so a small |b| is also consistent with a learned site signature.
 - **Site vs. donor** (motivated by the donor1-only validation result):
   - If the sample-level component is mainly site-driven, the D fold for donor1 (sites seen through other
     donors) should show small |b| and a pooled within-type Pearson clearly above 0.10.
@@ -280,6 +295,12 @@ The expectation above is flawed. It is kept unchanged for the record and is repl
     the C folds.
 - **Metric 3:** if sample shifts do not transfer, pooled within-type Pearson on unseen sites (C folds)
   should be clearly below the random-split 0.34 and closer to metric 1.
+
+Edits to this addendum, all made before any donor-split or site-split result:
+- Date corrected to 2026-11-15.
+- Added: MLP early stopping by inner validation, MLP seeds, exclusion of unseen cell types from metric 2.
+- Shift captured redefined as a ratio of sums.
+- Metric-2 expectation narrowed: only C can contradict the hypothesis; small |b| in D is not informative.
 
 ### Phase 4: MLP (validation only)
 
@@ -294,6 +315,22 @@ The expectation above is flawed. It is kept unchanged for the record and is repl
 
 `obs['GEX_phase']` (cell-cycle phase) is not used: it labels ~65% of bone marrow
 cells as G2M, which is not plausible.
+
+## Limitations (running list)
+
+- **Hyperparameters were frozen on the random split.** That condition rewards sample signatures, and the
+  frozen settings were chosen on validation cells from every donor. They are reused unchanged in the donor
+  and site splits.
+- **The donor1 fold of the donor split** removes 34% of the training cells and the only donor that links
+  the four sites.
+- **The 17 proteins without a measured gene** look harder: Phase 3 validation, ridge 0.47 vs 0.73 overall
+  and 0.25 vs 0.34 within cell type. Results on 110/117 proteins do not generalize to all 134.
+- **Donor and site are confounded** for donors 2-9 (one site each). Only donor1 allows a within-donor site
+  comparison.
+- **Validation numbers are optimistic,** more so for the MLP than for ridge (wider search, early
+  stopping on validation).
+- **"Within cell type" means within the 45 provided labels.** These labels come from the data providers
+  and are themselves partly based on RNA and protein.
 
 ## Setup
 

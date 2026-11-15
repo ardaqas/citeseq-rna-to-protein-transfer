@@ -63,13 +63,16 @@ It re-examines a known problem and does not propose a new method.
   donor1 only, within type x site: 0.37 -> 0.10). Write "sample-signature learning" only as a hypothesis.
 - **Pre-registered Phase 5 expectation** is in the README (recorded before the donor split). Do not edit it
   after seeing donor-split results; add any interpretation below it instead.
-  A dated correction addendum (2026-11-16) replaces it. The donor-split "within type" metric equals
+  A dated correction addendum (2026-11-15) replaces it. The donor-split "within type" metric equals
   within type x sample for donors 2-9, so a value of 0.10 is mechanical. The main test is now the
   standardized bias per (cell type x test sample) group, plus "shift captured" relative to the
   cell-type mean.
 - Phase 5 splits: R (random test, once), D (leave-one-donor-out, 9 folds), C (leave-one-site-out,
   4 folds; report donor1 vs other donors). Frozen hyperparameters, refit per fold on training cells only.
   A donor split never removes a site (donor1 is at all sites).
+  MLP in D/C: 1 seed, early stopping on an inner 15% validation drawn from fold training cells; R: 3 seeds.
+  Exclude from metric 2 the cell types absent from a fold's training cells, and report the counts.
+  Shift captured = 1 - sum|b|(ridge) / sum|b|(cell-type mean), cell-weighted, ratio of sums.
 
 ## Metrics
 Per protein: Pearson over all test cells; within-cell-type Pearson (types with
