@@ -40,6 +40,11 @@ It re-examines a known problem and does not propose a new method.
   fewer genes, slightly higher % mito; correlation 0.9998 or higher).
 - ADT depth has a strong site effect (verified within donor1): median ADT per cell is
   6,073 (s1), 627 (s2), 1,623 (s3) and 4,762 (s4).
+- Isotype-control share of ADT counts varies ~5x by site (~0.2% site1, ~1% site3) in every
+  lineage, so the background level depends on the site.
+- Gene set: PF4, PPBP, ITGA2B, ITGB3, GP9, XIST and RPS4Y1 are missing while GP1BB and TUBB1 are present.
+  This looks like an exclusion list rather than a count filter (hypothesis, not verified). Do not
+  write "low expression" as the reason. Do not download the Multiome file.
 - Only 12/45 cell types have >= 20 cells in every donor. cDC1 and T prog cycling occur only
   in donor7, and CD8+ T naive CD127+ CD26- CD101- only in donor2.
 

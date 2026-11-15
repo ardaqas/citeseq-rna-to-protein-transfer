@@ -54,6 +54,13 @@ size factors for GEX, CLR for ADT), but its QC thresholds do not match this file
 so the file was checked directly. Some GEX size factors are implausibly small
 (minimum ~0.0002), so this project normalizes GEX from `layers['counts']` itself.
 
+### Site effects on protein measurements
+
+- ADT depth per cell differs strongly by site. Within donor1 (the only donor measured at all
+  sites) the median is 6,073 at site1 vs 627 at site2.
+- The isotype-control share of ADT counts varies about 5-fold by site (~0.2% at site1, ~1% at
+  site3) in every lineage. The **background level depends on the site**.
+
 ### Protein-gene mapping (frozen before results)
 
 `resources/protein_gene_map.csv` maps each of the 134 proteins to its gene(s) by hand.
@@ -84,6 +91,8 @@ full-data correlation was computed.
 - A simple low-expression filter also cannot explain the missing genes. Strongly expressed
   platelet/megakaryocyte genes (PF4, PPBP, ITGA2B, ITGB3, GP9) and sex-linked genes
   (XIST, RPS4Y1) are absent, while related genes such as GP1BB and TUBB1 are present.
+- **Hypothesis (not verified):** this pattern looks more like an exclusion list (specific genes
+  removed on purpose) than a count-based filter.
 - Unexplained side observation: several genes near the start of chromosome 1 are detected in 0 cells of
   sample `s3d1` only.
 
@@ -114,9 +123,18 @@ across proteins (Pearson; RNA = log1p CP10k, protein = per-cell CLR).
 - Spearman gives the same picture, and controlling for sample barely changes the within-type values.
 - A mapping diagnostic flags 8 proteins whose own-gene correlation is ~0 and ranks below
   4,000 of 13,953 genes (CD83, CD115, CD103, CD163, CD154, CD223, CD152, CD42b). Their mappings are
-  unambiguous, so their signal may be close to background (hypothesis, compared with the
-  isotype-control noise reference in `results/phase2_isotype_noise_reference.csv`).
-- Full table: `results/phase2_protein_rna_correlation.csv`.
+  unambiguous. Follow-up (`notebooks/02b_phase2_followups.ipynb`):
+  - Only CD103 and CD42b sit at isotype-control level, which fits a background-level signal.
+  - The other six are above isotype level in most cells but still do not follow their own gene's RNA.
+    Why is not known.
+  - The CD115 signal is higher in erythroid cells than in CD14+ monocytes, even though CSF1R is detected
+    in 25% of CD14+ Mono and essentially not in erythroid cells.
+- ALAS2 (an erythroid gene) was the top-correlated gene for all isotype controls and 15 proteins.
+  This is an erythroid-vs-rest difference. Without erythroid cells, or within cell types, ALAS2's
+  correlation is about 0. The lower isotype share in erythroid cells may relate to Fc receptors
+  (hypothesis, not tested).
+- Tables: `results/phase2_protein_rna_correlation.csv`, `results/phase2b_alas2.csv`,
+  `results/phase2b_low_correlation_proteins.csv`.
 
 `obs['GEX_phase']` (cell-cycle phase) is not used: it labels ~65% of bone marrow
 cells as G2M, which is not plausible.
