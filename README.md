@@ -32,7 +32,23 @@ Verified from the file (see `results/data_structure.txt`):
 | site3 | donor1, donor6, donor7 | 32,029 |
 | site4 | donor1, donor8, donor9 | 16,750 |
 
+Cells per donor and site (`crosstab(DonorNumber, Site)`):
+
+| donor | site1 | site2 | site3 | site4 | total |
+|---|---|---|---|---|---|
+| donor1 | 5,227 | 10,465 | 9,521 | 5,456 | 30,669 |
+| donor2 | 4,978 | 0 | 0 | 0 | 4,978 |
+| donor3 | 6,106 | 0 | 0 | 0 | 6,106 |
+| donor4 | 0 | 5,584 | 0 | 0 | 5,584 |
+| donor5 | 0 | 9,122 | 0 | 0 | 9,122 |
+| donor6 | 0 | 0 | 11,035 | 0 | 11,035 |
+| donor7 | 0 | 0 | 11,473 | 0 | 11,473 |
+| donor8 | 0 | 0 | 0 | 3,929 | 3,929 |
+| donor9 | 0 | 0 | 0 | 7,365 | 7,365 |
+| total | 16,311 | 25,171 | 32,029 | 16,750 | 90,261 |
+
 - donor1 was measured at all four sites and contributes 30,669 cells (~34%).
+- Because donor1 is at every site, holding out any single donor never removes a site from training.
 - Every other donor was measured at a single site, so for donors 2-9 the donor
   effect and the site effect cannot be separated (donor-site confounding).
   A held-out donor is therefore also, mostly, a held-out site.
@@ -175,14 +191,17 @@ across proteins (Pearson; RNA = log1p CP10k, protein = per-cell CLR).
     decomposition.
   - The result holds on exactly the same cells (8,454 cells in 72 type x sample groups): 0.33 -> 0.10.
     The own gene stays at 0.06.
-  - **donor1 only** (one donor, four sites): ridge 0.37 within type -> 0.10 within type x site. With the
-    donor fixed, most of the between-sample part comes from site, i.e. it is technical, at least for
-    donor1.
+  - **donor1 only** (one donor, four sites): ridge 0.37 within type -> 0.10 within type x site. This uses
+    4,635 validation cells: 20 cell types and 24 cell type x site groups with >= 50 cells. On the same
+    cells (2,892 cells, 11 types, 24 groups) it is 0.34 -> 0.10. With the donor fixed, most of the
+    between-sample part comes from site, i.e. it is technical, at least for donor1.
   - *Hypothesis, not established:* ridge may pick up sample/site signatures in RNA. Alternatively, site
     may affect RNA and protein together. This was not tested.
 - **PCA components** (validation): with 50 PCs ridge keeps 95% of its full-rank overall Pearson
-  (0.70 vs 0.73) but only 81% of its within-type Pearson (0.27 vs 0.34), and 85% of its within type x
-  sample Pearson (0.088 vs 0.104). PCA truncation costs relatively more within-type information.
+  (0.695 vs 0.733, absolute difference 0.038). It keeps only 81% of its within-type Pearson (0.274 vs
+  0.337, difference 0.063) and 85% of its within type x sample Pearson (0.088 vs 0.104, difference 0.016).
+  PCA truncation costs relatively more within-type information. In absolute terms the within-sample part
+  is small.
 - Other open hypothesis: part of the within-type signal may be finer structure inside annotated types.
 
 ### Pre-registered expectation for Phase 5 (written before any donor-split result)
@@ -199,6 +218,68 @@ Recorded 2026-11-15, before the donor split was built or evaluated.
   split too.
 - Caveat known in advance: a donor split also removes those donors' cells from training and, except for
   donor1, holds out their site. A drop can therefore have more than one cause.
+
+#### Correction addendum (2026-11-16, still before any donor-split or site-split result)
+
+The expectation above is flawed. It is kept unchanged for the record and is replaced by the one below.
+
+1. **The 0.10 comparison is mechanical.** donor2-9 each consist of a single sample. For a test set
+   holding one of them, "within cell type" Pearson **is** "within cell type x sample" Pearson. That
+   metric is 0.10 in the random split too. A donor-split value near 0.10 is therefore expected by
+   construction and is **not** evidence for the sample-signature hypothesis.
+2. **The caveat about sites was wrong.** donor1 was measured at every site, so a donor split never removes
+   a site from training (see the donor x site table above). For donors 2-9 their site stays in training
+   through donor1 and the other donor of that site.
+
+**Phase 5 design (fixed now)**
+
+- Models use the frozen Phase 3/4 hyperparameters, with no retuning on the new splits. Within each fold,
+  every learned step is refit on that fold's training cells only: HVGs, scaling, PCA, ridge weights,
+  target scaling.
+- Hypothesis judgments use **ridge 3a**, which is deterministic. The cell-type-mean baseline is needed
+  as a reference for metric 2. The own-gene model and the MLP are reported alongside. The number of MLP
+  seeds per fold is fixed and recorded here before Phase 5 runs.
+- Splits:
+  - **R** — the existing random split, test part, used once.
+  - **D** — leave-one-donor-out, 9 folds. donor2-9 folds have 1 test sample each; the donor1 fold has
+    4 test samples, all at sites seen in training.
+  - **C** — leave-one-site-out, 4 folds. Each test site has 3 samples. Test cells are reported in two
+    groups: **donor1** (donor seen in training, site not) and **other donors** (neither seen).
+- All metrics: 110 primary proteins; groups need >= 50 test cells.
+
+**Metrics, for every split**
+
+1. **Within cell type x sample Pearson** (cell-weighted over groups, median over proteins). Compared with
+   the random split (validation: 0.104).
+2. **Standardized bias per (cell type x test sample) group:** `b = (mean prediction - mean truth) / SD`,
+   where SD is the protein's standard deviation in the fold's training cells.
+   - Per protein: cell-weighted mean of |b| over groups. Reported as the median over proteins.
+   - The same number is computed for the random split.
+   - Reference: the cell-type-mean baseline predicts the training mean of the type, so its |b| measures
+     how far the test sample's type mean lies from training, i.e. the sample shift.
+   - **Shift captured** = 1 - |b|(ridge) / |b|(cell-type mean), per protein, then the median.
+3. **Pooled within cell type Pearson**, only for test sets with >= 2 samples (donor1 fold: 4 samples;
+   each site fold: 3), reported together with the number of samples.
+
+**Expectations (written before any result)**
+
+- **Metric 1:** about 0.10 in every split under both hypotheses, so this metric does not discriminate
+  them. A clear drop well below 0.10 would mean that even within-sample, cell-level prediction depends on
+  having seen the sample.
+- **Metric 2 (the main test):**
+  - The sample-signature hypothesis predicts small |b| for samples seen in training (split R) and clearly
+    larger |b| for unseen samples (D folds for donors 2-9; C folds). Shift captured would be near 0,
+    i.e. close to the cell-type-mean baseline.
+  - If ridge's |b| stays small and shift captured stays well above 0 on unseen samples, ridge transfers
+    sample shifts, and the hypothesis is not supported.
+- **Site vs. donor** (motivated by the donor1-only validation result):
+  - If the sample-level component is mainly site-driven, the D fold for donor1 (sites seen through other
+    donors) should show small |b| and a pooled within-type Pearson clearly above 0.10.
+  - In the C folds, donor1 cells (unseen site) should then show |b| similar to the other donors at that
+    site. If it is mainly donor-driven, donor1 cells should show smaller |b| than the other donors in
+    the C folds.
+- **Metric 3:** if sample shifts do not transfer, pooled within-type Pearson on unseen sites (C folds)
+  should be clearly below the random-split 0.34 and closer to metric 1.
 
 ### Phase 4: MLP (validation only)
 
