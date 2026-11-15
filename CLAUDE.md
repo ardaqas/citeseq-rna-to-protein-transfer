@@ -63,6 +63,10 @@ It re-examines a known problem and does not propose a new method.
   Metric 3 for whole site folds was added afterwards from saved predictions (disclosed).
   Key results: shift captured R 0.43/0.62 (ridge/MLP) -> C 0.03-0.07; within type x sample 0.10-0.13 everywhere;
   on unseen sites ridge ~ MLP ~ cell-type mean overall (0.648 / 0.646 / 0.641).
+- **Phase 6 done:** `notebooks/06_proteins_and_figures.ipynb` (descriptive, from saved Phase 5 predictions).
+  The README was rewritten (Question/Data/Methods/Results/Limitations/Related work). The full phase log,
+  including the pre-registration, was moved verbatim to docs/analysis_log.md.
+  Main figures: results/figures/main_fig2_generalization.png, main_fig3_proteins.png, phase2_overall_vs_within.png.
 - **Test set rule:** do not evaluate test cells until all models (incl. Phase 4) are frozen; then use it once.
 - Within-type metric threshold: >= 50 cells of a type in the evaluated part, for every split
   (random split: 34 types in val, 34 in test).
