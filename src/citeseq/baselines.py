@@ -78,10 +78,17 @@ class RidgePath:
         Y = np.asarray(Y, dtype=np.float64)
         self.x_mean_, self.y_mean_ = Xc.mean(axis=0), Y.mean(axis=0)
         Xc -= self.x_mean_
-        gram = Xc.T @ Xc
-        xty = Xc.T @ (Y - self.y_mean_)
-        eye = np.eye(gram.shape[0])
-        self.coef_ = {a: np.linalg.solve(gram + a * eye, xty) for a in alphas}
+        self.gram_ = Xc.T @ Xc
+        self.xty_ = Xc.T @ (Y - self.y_mean_)
+        self.coef_ = {}
+        return self.extend(alphas)
+
+    def extend(self, alphas):
+        """Add solutions for more alphas without recomputing X^T X."""
+        eye = np.eye(self.gram_.shape[0])
+        for a in alphas:
+            if a not in self.coef_:
+                self.coef_[a] = np.linalg.solve(self.gram_ + a * eye, self.xty_)
         return self
 
     def predict(self, X, alpha):
@@ -93,8 +100,10 @@ class HVGPCAFeatures:
 
     fit():  HVGs chosen per sample on training cells (scanpy, flavor="seurat");
             a StandardScaler and a PCA fit on the training HVG matrix.
+            max_pcs=None keeps all components (full rank = number of HVGs).
     transform_pca(X, n_pcs): PCA scores (first n_pcs components).
     transform_hvg(X):        z-scored HVG matrix (dense float32).
+    hvg_dense(X):            unscaled log-normalized HVG matrix (dense float32).
     """
 
     def __init__(self, n_top_genes=2000, max_pcs=200, seed=0):
@@ -109,13 +118,17 @@ class HVGPCAFeatures:
         self.hvg_names_ = np.asarray(var_names)[self.hvg_mask_]
         Xh = X_train[:, self.hvg_mask_]
         # PCA on the sparse log-normalized HVG matrix (centering is handled by sklearn)
-        self.pca_ = PCA(n_components=self.max_pcs, svd_solver="covariance_eigh",
+        n_comp = int(self.hvg_mask_.sum()) if self.max_pcs is None else self.max_pcs
+        self.pca_ = PCA(n_components=n_comp, svd_solver="covariance_eigh",
                         random_state=self.seed).fit(Xh)
         self.scaler_ = StandardScaler().fit(Xh.toarray())
         return self
 
     def transform_pca(self, X, n_pcs):
-        return self.pca_.transform(X[:, self.hvg_mask_])[:, :n_pcs]
+        return self.pca_.transform(X[:, self.hvg_mask_])[:, :n_pcs].astype(np.float32)
+
+    def hvg_dense(self, X):
+        return X[:, self.hvg_mask_].toarray().astype(np.float32)
 
     def transform_hvg(self, X):
         return self.scaler_.transform(X[:, self.hvg_mask_].toarray()).astype(np.float32)

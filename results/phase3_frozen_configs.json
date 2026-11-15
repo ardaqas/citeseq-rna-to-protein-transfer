@@ -1,0 +1,74 @@
+{
+  "split_file": "results/splits/random_split.csv.gz",
+  "seed": 0,
+  "features": {
+    "hvg": 2000,
+    "hvg_flavor": "seurat",
+    "hvg_batch_key": "batch",
+    "pca_solver": "covariance_eigh",
+    "pca_components": 2000
+  },
+  "selection_metric": "mean validation Pearson over all 134 proteins",
+  "grids": {
+    "3a_n_pcs": [
+      50,
+      100,
+      200,
+      400,
+      800,
+      2000
+    ],
+    "3a_alphas_initial": [
+      0.01,
+      0.03162277660168379,
+      0.1,
+      0.31622776601683794,
+      1.0,
+      3.1622776601683795,
+      10.0,
+      31.622776601683793,
+      100.0,
+      316.22776601683796,
+      1000.0,
+      3162.2776601683795,
+      10000.0
+    ],
+    "3b_alphas": [
+      1.0,
+      3.1622776601683795,
+      10.0,
+      31.622776601683793,
+      100.0,
+      316.22776601683796,
+      1000.0,
+      3162.2776601683795,
+      10000.0,
+      31622.776601683792,
+      100000.0
+    ]
+  },
+  "grid_extensions_based_on_validation": [
+    "3a: best n_pcs is full rank (upper bound by construction, cannot be extended)"
+  ],
+  "3a_ridge_pca": {
+    "n_pcs": 2000,
+    "alpha": 1000.0
+  },
+  "3b_ridge_hvg": {
+    "alpha": 10000.0
+  },
+  "within_type_min_cells": {
+    "random_split": {
+      "val": 50,
+      "test": 50
+    },
+    "donor_split_phase5": {
+      "test": 50
+    }
+  },
+  "n_cell_types_evaluable_random_split": {
+    "val": 34,
+    "test": 34
+  },
+  "sanity_full_rank_pca_vs_unscaled_hvg_max_abs_diff": 2.4270399840986556e-06
+}

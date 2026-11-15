@@ -114,3 +114,21 @@ def test_split_handles_very_rare_labels():
     obs.iloc[:2, obs.columns.get_loc("cell_type")] = ["only_one", "another_single"]
     s = make_random_split(obs, seed=0)
     assert len(s) == len(obs) and set(s.unique()) == {"train", "val", "test"}
+
+
+def test_ridge_full_rank_pca_equals_ridge_on_unscaled_hvg():
+    # Ridge is invariant to orthogonal rotations of centered inputs, and full-rank PCA
+    # is such a rotation, so both must give the same predictions for the same alpha.
+    rng = np.random.default_rng(7)
+    n, g = 500, 200
+    X = sp.csr_matrix(np.log1p(rng.poisson(rng.gamma(0.8, 2.0, size=g), size=(n, g)).astype(float)))
+    obs = _obs(n)
+    Y = rng.normal(size=(n, 3))
+    tr = np.arange(n) < 400
+    f = HVGPCAFeatures(n_top_genes=40, max_pcs=None).fit(X[tr], obs[tr], [f"g{i}" for i in range(g)])
+    k = int(f.hvg_mask_.sum())
+    assert f.pca_.n_components_ == k
+    for alpha in (0.5, 50.0):
+        p_pca = RidgePath().fit(f.transform_pca(X[tr], k), Y[tr], [alpha]).predict(f.transform_pca(X[~tr], k), alpha)
+        p_hvg = RidgePath().fit(f.hvg_dense(X[tr]), Y[tr], [alpha]).predict(f.hvg_dense(X[~tr]), alpha)
+        np.testing.assert_allclose(p_pca, p_hvg, atol=1e-4)
