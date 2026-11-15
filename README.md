@@ -27,9 +27,10 @@ leakage-free splits and metrics fixed in advance.
    unseen sites** (main figure, panel B). On unseen sites the models' lead over the cell-type average
    disappears (panel A).
 4. **A small within-sample signal transfers everywhere.** Within cell type and sample, the models reach
-   about 0.10-0.13 in every split, about twice the protein's own gene (0.06) (panel C). Lineage markers
-   are predicted best overall. Activation-state proteins (CD38, ICAM1, HLA-DR) carry the most
-   transferable within-sample signal ([figure](results/figures/readme_proteins.png)).
+   about 0.10-0.13 in every split, about twice the protein's own gene (0.06) (panel C). Proteins that
+   differ most between cell types (e.g. CD71, CD19, CD3) are predicted best overall. Proteins such as
+   CD38, ICAM1 and HLA-DR carry the most transferable within-sample signal
+   ([figure](results/figures/readme_proteins.png)).
 
 ## How to read the results
 
@@ -78,9 +79,13 @@ The site-split expectations were written and committed before any donor- or site
 - **Main test (only the site split could contradict it): not contradicted.** The site split did not
   contradict the hypothesis that the models' extra within-type accuracy rests on sample-level shifts of
   seen samples.
-- **Site vs. donor: mixed.** donor1's cells at an unseen site are not predicted better than other
-  donors' cells, which points to site rather than donor. The donor-split result for donor1 does not fit
-  cleanly.
+- **Site vs. donor: neither pre-registered alternative fit fully.**
+  - A site-driven shift predicted two things: a small bias when donor1 is held out with its sites
+    seen, which was **not** met (shift captured 0.14); and similar bias for donor1 and the other donors
+    at an unseen site, which was met.
+  - A donor-driven shift predicted smaller bias for donor1 at an unseen site, which was **not** met.
+  - *Post hoc interpretation:* most of the shift appears specific to each sample. Whether it is
+    technical or donor x site biology cannot be separated with this design.
 - **Disclosed deviation:** one pre-registered metric was computed after the first run, from saved
   predictions, without refitting.
 
@@ -88,7 +93,7 @@ The site-split expectations were written and committed before any donor- or site
 
 | | proteins |
 |---|---|
-| best overall (random split) | CD71, CD72, CD5, CD36, CD2, CD11c, CD3, CD19 (r >= 0.90; lineage markers) |
+| best overall (random split) | CD71, CD72, CD5, CD36, CD2, CD11c, CD3, CD19 (r >= 0.90) |
 | worst overall | CD42b (0.27), CD119, CD134, CD163, CD270, CD25, CD103 |
 | most transferable within-sample signal | CD38 (0.34), CD54/ICAM1, HLA-DR, CD35, CD9, CD82, CD62L, KLRG1 |
 | least | CD137, CD83, LAG3, CD42b, CD154, CD23, CD134, CTLA4 (<= 0.02) |
@@ -139,10 +144,17 @@ and the notebooks.
 
 1. **Hyperparameters were tuned on the random split.** That setting rewards learning sample shifts.
    They were not retuned for D or C.
-2. **Donor and site are confounded** for 8 of 9 donors (one site each). Only donor1 allows a
-   within-donor site comparison.
-3. **One dataset, one tissue, 45 provided cell-type labels.** The labels were themselves derived partly
-   from RNA and protein. "Within cell type" means within these labels.
+2. **Donor and sample handling cannot be separated.** donor1 was measured at every site, so each other
+   donor can be compared with donor1's sample at the same site. But donors 2-9 each contributed a single
+   sample, so their biology cannot be separated from how that one sample was prepared and measured.
+3. **One dataset, one tissue, 45 provided cell-type labels.**
+   - The data providers made the labels for each sample and modality separately. They used
+     literature-derived, data-derived and expert-curated marker genes, not a joint embedding (Luecken et
+     al., 2021, section "Processing, annotation, and splits of the benchmark dataset").
+   - The competition documentation describes `obs['cell_type']` as annotated from the gene-expression
+     data. The providers' per-sample CITE-seq notebooks also contain an ADT analysis and an
+     annotation-merging step, so protein markers may have contributed (reported, not verified).
+   - "Within cell type" means within these labels.
 4. **17 of 134 proteins have no measured gene in the file, for reasons we could not determine.** They
    look harder (validation ridge 0.47 vs 0.73), so results on 110 proteins do not generalize to all
    134.
@@ -193,13 +205,13 @@ cd ../..
 
 Predicting surface protein from RNA has dedicated methods; this project does not compete with them.
 
-> ⚠️ **Not yet verified:** the references below were written from memory and have not been checked
-> against the original publications. Remove this note after checking.
+> ⚠️ References marked "unverified" were written from memory and have not yet been checked against the
+> original publications.
 
 - Stoeckius et al. *Simultaneous epitope and transcriptome measurement in single cells.* Nature Methods,
   2017. (CITE-seq) ⚠️ unverified
-- Luecken et al. *A sandbox for prediction and integration of DNA, RNA, and proteins in single cells.*
-  NeurIPS Datasets and Benchmarks, 2021. (this dataset) ⚠️ unverified
+- Luecken et al. *A sandbox for prediction and integration of DNA, RNA, and protein data in single
+  cells.* NeurIPS Datasets and Benchmarks Track, 2021. (this dataset)
 - Lance et al. *Multimodal single cell data integration challenge: results and lessons learned.*
   Proceedings of Machine Learning Research (NeurIPS 2021 competition track), 2022. ⚠️ unverified
 - Zhou et al. *Surface protein imputation from single cell transcriptomes by deep neural networks.*
@@ -207,8 +219,8 @@ Predicting surface protein from RNA has dedicated methods; this project does not
 - Lakkis et al. *A multi-use deep learning method for CITE-seq and single-cell RNA-seq data integration
   with cell surface protein prediction and imputation.* Nature Machine Intelligence, 2022. (sciPENN)
   ⚠️ unverified
-- Hanhart et al. *scLinear predicts protein abundance at single-cell resolution.* Communications Biology,
-  2024. ⚠️ unverified (least certain)
+- Hanhart et al. *scLinear predicts protein abundance at single-cell resolution.* Communications Biology
+  7, 267 (2024). doi:10.1038/s42003-024-05958-4
 - Mulè et al. *Normalizing and denoising protein expression data from droplet-based single cell
   profiling.* Nature Communications, 2022. (DSB) ⚠️ unverified
 

@@ -28,13 +28,14 @@ mpl.rcParams.update({
     "axes.spines.top": False, "axes.spines.right": False,
     "font.size": 11, "axes.titlesize": 12, "axes.labelsize": 11, "xtick.labelsize": 10,
     "ytick.labelsize": 10, "legend.fontsize": 10, "figure.titlesize": 14,
-    "savefig.dpi": 150, "savefig.bbox": "tight", "svg.fonttype": "none", "font.family": "sans-serif",
+    "savefig.dpi": 150, "savefig.bbox": "tight", "svg.fonttype": "none", "svg.hashsalt": "citeseq",
+    "font.family": "sans-serif",
 })
 
 
 def save(fig, name):
-    for ext in ("png", "svg"):
-        fig.savefig(FIG / f"{name}.{ext}")
+    fig.savefig(FIG / f"{name}.png")
+    fig.savefig(FIG / f"{name}.svg", metadata={"Date": None})  # no timestamp: deterministic SVG
     plt.close(fig)
 
 
@@ -241,8 +242,8 @@ for _, r in label.iterrows():
                 xytext=offsets.get(r["protein"], (5, 3)), textcoords="offset points")
 ax.set_xlabel("overall Pearson r, random-split test cells (ridge)")
 ax.set_ylabel("within cell type x sample Pearson r,\nunseen sites (ridge)")
-ax.set_title("Lineage markers are predicted best overall; activation-state proteins\n"
-             "(CD38, ICAM1, HLA-DR) carry the most transferable within-sample signal", loc="left", fontsize=11.5)
+ax.set_title("Proteins that differ most between cell types are predicted best overall;\n"
+             "CD38, ICAM1 and HLA-DR carry the most transferable within-sample signal", loc="left", fontsize=11.5)
 fig.tight_layout()
 save(fig, "readme_proteins")
 
