@@ -2,6 +2,8 @@
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
+from scipy.stats import rankdata
+from sklearn.utils.sparsefuncs import mean_variance_axis
 
 
 def load_protein_gene_map(path, available_genes):
@@ -53,9 +55,20 @@ def pearson_columns(a, b):
     return r
 
 
-def within_group_pearson(rna, prot, groups, min_cells):
-    """Pearson r per protein inside each group with >= min_cells cells.
+def corr_columns(a, b, method="pearson"):
+    """Column-wise correlation; Spearman = Pearson on ranks (ties get average ranks)."""
+    a, b = np.asarray(a, dtype=np.float64), np.asarray(b, dtype=np.float64)
+    if method == "spearman":
+        a, b = rankdata(a, axis=0), rankdata(b, axis=0)
+    elif method != "pearson":
+        raise ValueError(method)
+    return pearson_columns(a, b)
 
+
+def within_group_pearson(rna, prot, groups, min_cells, method="pearson"):
+    """Correlation per protein inside each group with >= min_cells cells.
+
+    For Spearman, ranks are computed inside each group.
     Returns a long DataFrame: group, protein index, n_cells, r.
     """
     groups = np.asarray(groups).astype(str)
@@ -65,7 +78,7 @@ def within_group_pearson(rna, prot, groups, min_cells):
         n = int(sel.sum())
         if n < min_cells:
             continue
-        r = pearson_columns(rna[sel].astype(np.float64), prot[sel].astype(np.float64))
+        r = corr_columns(rna[sel], prot[sel], method)
         out.append(pd.DataFrame({"group": g, "j": np.arange(rna.shape[1]), "n_cells": n, "r": r}))
     return pd.concat(out, ignore_index=True)
 
@@ -99,3 +112,44 @@ def between_group_pearson(rna, prot, groups, min_cells):
     mr = df_r.mean().loc[keep].to_numpy()
     mp = pd.DataFrame(prot).groupby(np.asarray(groups).astype(str)).mean().loc[keep].to_numpy()
     return pearson_columns(mr, mp), len(keep)
+
+
+def correlate_with_all_genes(X, Y):
+    """Pearson r between every gene (columns of sparse X) and every column of Y.
+
+    X : (cells x genes) sparse, e.g. log-normalized RNA
+    Y : (cells x k) dense, e.g. protein CLR values
+    Returns (genes x k) array. Uses cov = X^T (Y - mean(Y)) / n, so X is never
+    densified. Genes with zero variance get NaN.
+    """
+    n = X.shape[0]
+    Y = np.asarray(Y, dtype=np.float64)
+    Yc = Y - Y.mean(axis=0)
+    cov = np.asarray(X.T @ Yc) / n
+    _, var_x = mean_variance_axis(X, axis=0)
+    sd_x = np.sqrt(np.asarray(var_x, dtype=np.float64))
+    sd_y = Yc.std(axis=0)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        r = cov / sd_x[:, None] / sd_y[None, :]
+    r[sd_x == 0, :] = np.nan
+    return r
+
+
+def mapped_gene_rank(r_all_genes, gene_names, mapped_r, names):
+    """Where does the mapped gene's r fall among all genes, per protein?
+
+    rank 1 = the mapped RNA correlates better with the protein than any other gene.
+    Diagnostic only; must not be used to choose mappings.
+    """
+    rows = []
+    for j, name in enumerate(names):
+        col = r_all_genes[:, j]
+        top = int(np.nanargmax(col))
+        rows.append({
+            "protein": name,
+            "mapped_r": mapped_r[j],
+            "mapped_rank": int(np.sum(col > mapped_r[j]) + 1) if np.isfinite(mapped_r[j]) else np.nan,
+            "top_gene": gene_names[top],
+            "top_gene_r": col[top],
+        })
+    return pd.DataFrame(rows)

@@ -51,3 +51,30 @@ def test_small_groups_are_skipped():
     groups = np.array(["big"] * 25 + ["small"] * 5)
     long = within_group_pearson(rna, rna, groups, min_cells=10)
     assert set(long["group"]) == {"big"}
+
+
+def test_spearman_is_rank_based():
+    from citeseq.correlation import corr_columns
+    x = np.arange(1.0, 21.0)[:, None]
+    y = np.exp(x)  # monotone but non-linear
+    assert np.isclose(corr_columns(x, y, "spearman")[0], 1.0)
+    assert corr_columns(x, y, "pearson")[0] < 0.9
+
+
+def test_correlate_with_all_genes_matches_dense():
+    from citeseq.correlation import correlate_with_all_genes, mapped_gene_rank
+    rng = np.random.default_rng(2)
+    X = sp.random(300, 20, density=0.3, format="csr", random_state=3)
+    X[:, 5] = 0  # constant gene
+    Y = rng.normal(size=(300, 2))
+    Y[:, 0] += 3 * X[:, 7].toarray().ravel()
+    r = correlate_with_all_genes(X, Y)
+    D = X.toarray()
+    for g in range(20):
+        for k in range(2):
+            if g == 5:
+                assert np.isnan(r[g, k])
+            else:
+                assert np.isclose(r[g, k], np.corrcoef(D[:, g], Y[:, k])[0, 1])
+    diag = mapped_gene_rank(r, [f"g{i}" for i in range(20)], r[[7, 0], [0, 1]], ["p0", "p1"])
+    assert diag.loc[0, "mapped_rank"] == 1 and diag.loc[0, "top_gene"] == "g7"
