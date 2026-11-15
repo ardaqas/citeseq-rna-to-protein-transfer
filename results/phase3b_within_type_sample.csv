@@ -1,0 +1,6 @@
+model,data,within type,within type x sample,n groups (type / type x sample),change
+"own gene (Phase 2, correlation)",all cells,0.0723787321769274,0.06160504938438565,42 / 296,-0.010773682792541754
+own gene,validation (Phase 3 split),0.08044197163640576,0.061175413495823616,34 / 72,-0.019266558140582146
+cell-type mean (labels),validation (Phase 3 split),,,34 / 72,
+ridge PCA (full rank),validation (Phase 3 split),0.336768803045309,0.10362379662218792,34 / 72,-0.23314500642312108
+ridge HVG,validation (Phase 3 split),0.3326033589576255,0.10142019769245195,34 / 72,-0.23118316126517355

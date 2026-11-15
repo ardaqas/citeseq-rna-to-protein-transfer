@@ -93,3 +93,10 @@ def test_within_group_gene_correlation_weighted_mean():
         ra = np.corrcoef(D[:100, g], Y[:100, 0])[0, 1]
         rb = np.corrcoef(D[100:380, g], Y[100:380, 0])[0, 1]
         assert np.isclose(mean_r[g, 0], (100 * ra + 280 * rb) / 380)
+
+
+def test_no_group_large_enough_gives_nan_summary():
+    rna = np.arange(20.0)[:, None]
+    long = within_group_pearson(rna, rna, np.array(["a"] * 10 + ["b"] * 10), min_cells=50)
+    s = summarize_within(long, 1).loc[0]
+    assert len(long) == 0 and np.isnan(s["weighted_mean"]) and s["n_groups"] == 0

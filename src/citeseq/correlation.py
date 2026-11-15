@@ -83,6 +83,9 @@ def within_group_pearson(rna, prot, groups, min_cells, method="pearson"):
             continue
         r = corr_columns(rna[sel], prot[sel], method)
         out.append(pd.DataFrame({"group": g, "j": np.arange(rna.shape[1]), "n_cells": n, "r": r}))
+    if not out:  # no group reached min_cells
+        return pd.DataFrame({"group": pd.Series(dtype=str), "j": pd.Series(dtype=int),
+                             "n_cells": pd.Series(dtype=int), "r": pd.Series(dtype=float)})
     return pd.concat(out, ignore_index=True)
 
 
