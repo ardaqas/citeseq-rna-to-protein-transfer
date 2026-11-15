@@ -43,15 +43,18 @@ def mapped_log_expression(counts, gene_names, total_counts, gene_lists, target_s
 def pearson_columns(a, b):
     """Pearson r between matching columns of two (n x k) arrays.
 
-    Returns NaN for a column where either input is constant.
+    Returns NaN for a column where either input is constant. Constancy is checked
+    exactly (max == min) before centering, because centering a constant column
+    can leave tiny floating-point residues that would give a meaningless r.
     """
+    const = (a.max(axis=0) == a.min(axis=0)) | (b.max(axis=0) == b.min(axis=0))
     a = a - a.mean(axis=0)
     b = b - b.mean(axis=0)
     num = (a * b).sum(axis=0)
     den = np.sqrt((a * a).sum(axis=0) * (b * b).sum(axis=0))
     with np.errstate(invalid="ignore", divide="ignore"):
         r = num / den
-    r[den == 0] = np.nan
+    r[(den == 0) | const] = np.nan
     return r
 
 
@@ -126,7 +129,7 @@ def correlate_with_all_genes(X, Y):
     Y = np.asarray(Y, dtype=np.float64)
     Yc = Y - Y.mean(axis=0)
     cov = np.asarray(X.T @ Yc) / n
-    _, var_x = mean_variance_axis(X, axis=0)
+    var_x = mean_variance_axis(X, axis=0)[1]
     sd_x = np.sqrt(np.asarray(var_x, dtype=np.float64))
     sd_y = Yc.std(axis=0)
     with np.errstate(invalid="ignore", divide="ignore"):
