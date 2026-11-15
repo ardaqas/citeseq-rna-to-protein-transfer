@@ -5,7 +5,7 @@ protein abundance be predicted from RNA in single cells, and how much of that
 success comes from cell-type identity versus within-cell-type variation?
 It does not propose a new method.
 
-> Status: Phases 0-2 done. Results and figures are added phase by phase.
+> Status: Phases 0-3 done (Phase 3: validation only). Results and figures are added phase by phase.
 
 ## Data
 
@@ -135,6 +135,37 @@ across proteins (Pearson; RNA = log1p CP10k, protein = per-cell CLR).
   (hypothesis, not tested).
 - Tables: `results/phase2_protein_rna_correlation.csv`, `results/phase2b_alas2.csv`,
   `results/phase2b_low_correlation_proteins.csv`.
+
+### Phase 3: baselines (validation only)
+
+> **These are validation numbers only. The test set has not been used.** It will be used once,
+> after all models (including Phase 4) are frozen. Ridge hyperparameters were chosen on the same
+> validation cells, so its numbers are slightly optimistic.
+
+`notebooks/03_baselines.ipynb`. Random cell split 70/15/15, stratified by cell type
+(`results/splits/random_split.csv.gz`). HVGs, scaling and PCA were fit on training cells only. Primary set
+(110 proteins), median [IQR] across proteins. Within-type values use the 34 cell types that have
+>= 50 validation cells.
+
+| Model | Pearson, all cells | within cell type (weighted) | RMSE |
+|---|---|---|---|
+| global mean | undefined | undefined | 0.51 |
+| cell-type mean (**uses the cell-type labels**) | 0.65 [0.47-0.73] | undefined | 0.35 |
+| own gene (linear) | 0.29 [0.15-0.45] | 0.08 [0.04-0.13] | 0.45 |
+| ridge on PCA (selected: full rank, 2,000 PCs) | 0.73 [0.58-0.83] | 0.34 [0.27-0.43] | 0.31 |
+| ridge on z-scored HVGs | 0.73 [0.57-0.83] | 0.33 [0.26-0.42] | 0.31 |
+
+- "Undefined" means the correlation does not exist for a constant prediction. It is not counted as 0.
+- Ridge (RNA only, no labels) beats the label-based cell-type mean overall for 109 of 110 proteins.
+  It beats the own-gene model on both metrics for all 110.
+- The PCA grid {50, ..., 2,000} was best at full rank, which is the upper bound (logged in
+  `results/phase3_frozen_configs.json`). Sanity check: ridge on full-rank PCA equals ridge on the
+  unscaled HVGs (max difference 2.4e-6).
+- Within-type metric threshold, fixed before any test evaluation: >= 50 cells of a type in the evaluated
+  part, for every split. Random split: 34 evaluable types in validation and 34 in test. The donor split
+  is reported in Phase 5.
+- Open questions (hypotheses): part of the within-type signal may be finer structure inside annotated
+  types, or sample/site signatures shared between training and validation in a random split.
 
 `obs['GEX_phase']` (cell-cycle phase) is not used: it labels ~65% of bone marrow
 cells as G2M, which is not plausible.

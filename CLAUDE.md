@@ -52,6 +52,12 @@ It re-examines a known problem and does not propose a new method.
 - Phase 0, 1, 2 done. Phase 2: `notebooks/02_protein_rna_correlation.ipynb` (peak 2.9 GB, <1 min); map frozen at 8ee25f5 (110 primary, 7 secondary, 17 unavailable).
 - Phase 1 normalization: RNA = CP10k + log1p from counts; ADT target = provided per-cell CLR.
 - `pynndescent<0.6` is pinned (0.7 breaks scanpy 1.11.5 neighbors on large data).
+- Phase 3 done, **validation only**: `notebooks/03_baselines.ipynb`, split `results/splits/random_split.csv.gz`,
+  frozen configs `results/phase3_frozen_configs.json` (ridge PCA: full rank 2000 PCs, alpha 1000; ridge HVG: alpha 1e4).
+- **Test set rule:** do not evaluate test cells until all models (incl. Phase 4) are frozen; then use it once.
+- Within-type metric threshold: >= 50 cells of a type in the evaluated part, for every split
+  (random split: 34 types in val, 34 in test).
+- Grid rule: if the best setting is on a grid edge, extend the grid using validation only and log it.
 
 ## Metrics
 Per protein: Pearson over all test cells; within-cell-type Pearson (types with
