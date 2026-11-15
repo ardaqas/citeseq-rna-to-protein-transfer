@@ -78,3 +78,18 @@ def test_correlate_with_all_genes_matches_dense():
                 assert np.isclose(r[g, k], np.corrcoef(D[:, g], Y[:, k])[0, 1])
     diag = mapped_gene_rank(r, [f"g{i}" for i in range(20)], r[[7, 0], [0, 1]], ["p0", "p1"])
     assert diag.loc[0, "mapped_rank"] == 1 and diag.loc[0, "top_gene"] == "g7"
+
+
+def test_within_group_gene_correlation_weighted_mean():
+    from citeseq.correlation import within_group_gene_correlation
+    rng = np.random.default_rng(4)
+    X = sp.random(400, 6, density=0.5, format="csr", random_state=5)
+    Y = rng.normal(size=(400, 2))
+    groups = np.array(["a"] * 100 + ["b"] * 280 + ["c"] * 20)
+    mean_r, n_used = within_group_gene_correlation(X, Y, groups, min_cells=50)
+    assert n_used == 2  # group "c" is too small
+    D = X.toarray()
+    for g in range(6):
+        ra = np.corrcoef(D[:100, g], Y[:100, 0])[0, 1]
+        rb = np.corrcoef(D[100:380, g], Y[100:380, 0])[0, 1]
+        assert np.isclose(mean_r[g, 0], (100 * ra + 280 * rb) / 380)

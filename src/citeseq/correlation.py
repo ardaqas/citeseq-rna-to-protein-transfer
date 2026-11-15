@@ -153,3 +153,30 @@ def mapped_gene_rank(r_all_genes, gene_names, mapped_r, names):
             "top_gene_r": col[top],
         })
     return pd.DataFrame(rows)
+
+
+def within_group_gene_correlation(X, Y, groups, min_cells):
+    """Cell-weighted mean over groups of the gene x protein Pearson r.
+
+    For each group with >= min_cells cells, r is computed inside the group with
+    `correlate_with_all_genes`. Pairs that are undefined in a group (constant gene
+    or protein there) are left out of that pair's average.
+    Returns (mean_r, n_groups_used): mean_r is (genes x k).
+    """
+    groups = np.asarray(groups).astype(str)
+    num = np.zeros((X.shape[1], Y.shape[1]))
+    den = np.zeros_like(num)
+    n_used = 0
+    for g in pd.unique(groups):
+        sel = np.flatnonzero(groups == g)
+        if sel.size < min_cells:
+            continue
+        r = correlate_with_all_genes(X[sel], np.asarray(Y)[sel])
+        ok = np.isfinite(r)
+        num[ok] += sel.size * r[ok]
+        den[ok] += sel.size
+        n_used += 1
+    with np.errstate(invalid="ignore", divide="ignore"):
+        mean_r = num / den
+    mean_r[den == 0] = np.nan
+    return mean_r, n_used
