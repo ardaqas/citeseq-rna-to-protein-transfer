@@ -77,7 +77,9 @@ full-data correlation was computed.
 - **Unavailable (17 proteins):** at least one mapped gene is not among the 13,953
   genes in the file. Why these genes are missing has **not** been determined
   (see below). Results for 110 or 117 proteins do not generalize to all 134: the missing
-  proteins may be a systematically harder subset.
+  proteins may be a systematically harder subset. In Phase 3 (validation), ridge predicts these 17
+  proteins less well than the primary set: median Pearson 0.47 vs 0.73 over all cells, and 0.25 vs
+  0.34 within cell type. The label-based cell-type mean is also lower for them (0.39 vs 0.65).
 
 **Why are some genes missing? (not resolved)**
 
@@ -164,8 +166,16 @@ across proteins (Pearson; RNA = log1p CP10k, protein = per-cell CLR).
 - Within-type metric threshold, fixed before any test evaluation: >= 50 cells of a type in the evaluated
   part, for every split. Random split: 34 evaluable types in validation and 34 in test. The donor split
   is reported in Phase 5.
-- Open questions (hypotheses): part of the within-type signal may be finer structure inside annotated
-  types, or sample/site signatures shared between training and validation in a random split.
+- **Within cell type x sample** (`notebooks/03b_phase3_followups.ipynb`, validation): holding the
+  sample fixed as well lowers ridge's within-type Pearson from 0.34 to 0.10. The own gene barely changes
+  (0.08 -> 0.06; Phase 2: 0.07 -> 0.06). About two thirds of ridge's within-type correlation is therefore
+  between-sample variation inside a cell type. This fits ridge using sample/site signatures in RNA, and
+  may also include real donor differences; which of the two is not tested. Only 72 type x sample groups
+  reach 50 validation cells, so the comparison covers partly different cells.
+- **PCA components** (validation): with 50 PCs ridge keeps 95% of its full-rank overall Pearson
+  (0.70 vs 0.73) but only 81% of its within-type Pearson (0.27 vs 0.34). PCA truncation costs relatively
+  more within-type information.
+- Other open hypothesis: part of the within-type signal may be finer structure inside annotated types.
 
 `obs['GEX_phase']` (cell-cycle phase) is not used: it labels ~65% of bone marrow
 cells as G2M, which is not plausible.
