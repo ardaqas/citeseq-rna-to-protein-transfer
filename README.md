@@ -5,7 +5,7 @@ protein abundance be predicted from RNA in single cells, and how much of that
 success comes from cell-type identity versus within-cell-type variation?
 It does not propose a new method.
 
-> Status: Phase 0 done (setup and data checks). Results and figures will be added phase by phase.
+> Status: Phases 0-2 done. Results and figures are added phase by phase.
 
 ## Data
 
@@ -69,8 +69,23 @@ full-data correlation was computed.
   (mostly intracellular), CD32, CD16 (paralog ambiguity).
 - **Unavailable (17 proteins):** at least one mapped gene is not among the 13,953
   genes in the file. Why these genes are missing has **not** been determined
-  yet. Results for 110 or 117 proteins do not generalize to all 134: the missing
+  (see below). Results for 110 or 117 proteins do not generalize to all 134: the missing
   proteins may be a systematically harder subset.
+
+**Why are some genes missing? (not resolved)**
+
+- The organizers' per-sample analysis notebooks
+  ([openproblems-bio/neurips2021-notebooks](https://github.com/openproblems-bio/neurips2021-notebooks))
+  filter genes with `sc.pp.filter_genes(min_cells=20)` within each sample.
+- The final gene set is **not** explained by "at least 20 cells in every sample":
+  1,749 retained genes fall below that in at least one sample.
+- No obvious single global threshold either. The least-detected retained gene is found
+  in 172 cells.
+- A simple low-expression filter also cannot explain the missing genes. Strongly expressed
+  platelet/megakaryocyte genes (PF4, PPBP, ITGA2B, ITGB3, GP9) and sex-linked genes
+  (XIST, RPS4Y1) are absent, while related genes such as GP1BB and TUBB1 are present.
+- Unexplained side observation: several genes near the start of chromosome 1 are detected in 0 cells of
+  sample `s3d1` only.
 
 Mapping changes:
 
@@ -79,6 +94,29 @@ Mapping changes:
 | 2026-11-15 | CD32: FCGR2A -> FCGR2A + FCGR2B | before results (subset results were not inspected) |
 
 Any change made after seeing results will be marked **post hoc** here.
+
+## Results so far
+
+### Phase 2: protein vs. its own gene's RNA
+
+`notebooks/02_protein_rna_correlation.ipynb`, primary set of 110 proteins. Values are medians
+across proteins (Pearson; RNA = log1p CP10k, protein = per-cell CLR).
+
+| Correlation | median (IQR) |
+|---|---|
+| all cells | 0.29 (0.14-0.45) |
+| between cell types (pseudo-bulk) | 0.84 (0.61-0.94) |
+| within cell type, cell-weighted | 0.07 (0.04-0.12) |
+| within cell type x sample | 0.06 |
+
+- Most of the own-gene correlation comes from differences between cell types.
+  Within a cell type it is small for nearly all proteins (lower than overall for 100 of 110).
+- Spearman gives the same picture, and controlling for sample barely changes the within-type values.
+- A mapping diagnostic flags 8 proteins whose own-gene correlation is ~0 and ranks below
+  4,000 of 13,953 genes (CD83, CD115, CD103, CD163, CD154, CD223, CD152, CD42b). Their mappings are
+  unambiguous, so their signal may be close to background (hypothesis, compared with the
+  isotype-control noise reference in `results/phase2_isotype_noise_reference.csv`).
+- Full table: `results/phase2_protein_rna_correlation.csv`.
 
 `obs['GEX_phase']` (cell-cycle phase) is not used: it labels ~65% of bone marrow
 cells as G2M, which is not plausible.

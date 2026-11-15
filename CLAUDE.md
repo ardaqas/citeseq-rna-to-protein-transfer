@@ -44,7 +44,7 @@ It re-examines a known problem and does not propose a new method.
   in donor7, and CD8+ T naive CD127+ CD26- CD101- only in donor2.
 
 ## Phase status
-- Phase 0: done. Phase 1: done (`notebooks/01_anndata_qc_normalization.ipynb`, peak 4.5 GB, ~3 min).
+- Phase 0, 1, 2 done. Phase 2: `notebooks/02_protein_rna_correlation.ipynb` (peak 2.9 GB, <1 min); map frozen at 8ee25f5 (110 primary, 7 secondary, 17 unavailable).
 - Phase 1 normalization: RNA = CP10k + log1p from counts; ADT target = provided per-cell CLR.
 - `pynndescent<0.6` is pinned (0.7 breaks scanpy 1.11.5 neighbors on large data).
 
